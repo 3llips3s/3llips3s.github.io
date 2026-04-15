@@ -43,3 +43,11 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Studio 10200 — Mandatory Blocklist
+.env
+project_guide.rtf
+loading_animation.rtf
+replication_guide.md
+.antigravityrules
+agent_instructions/
