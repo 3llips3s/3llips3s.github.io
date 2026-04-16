@@ -1,8 +1,8 @@
 /// Data model and content manifest for the Project Registry.
 class ProjectInfo {
   final String name;
-  final String descriptionDe; // German description (informal "Du" form)
-  final String descriptionEn; // English translation
+  final String? descriptionDe; // Optional German description (informal "Du" form)
+  final String? descriptionEn; // Optional English translation
   final String screenshotPath;
   final String? webUrl; // null → no "Play" button
   final String? apkUrl; // null → no "Download" button
@@ -10,8 +10,8 @@ class ProjectInfo {
 
   const ProjectInfo({
     required this.name,
-    required this.descriptionDe,
-    required this.descriptionEn,
+    this.descriptionDe,
+    this.descriptionEn,
     required this.screenshotPath,
     this.webUrl,
     this.apkUrl,

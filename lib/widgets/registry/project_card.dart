@@ -132,27 +132,30 @@ class ProjectCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              project.descriptionDe,
-              style: GoogleFonts.inter(
-                fontSize: isMobile ? 13 : 15,
-                fontWeight: FontWeight.w400,
-                color: textPrimary,
-                height: 1.5,
+            if (project.descriptionDe != null)
+              Text(
+                project.descriptionDe!,
+                style: GoogleFonts.inter(
+                  fontSize: isMobile ? 13 : 15,
+                  fontWeight: FontWeight.w400,
+                  color: textPrimary,
+                  height: 1.5,
+                ),
               ),
-            ),
-            SizedBox(height: isMobile ? 8 : 12),
-            Text(
-              project.descriptionEn,
-              style: GoogleFonts.inter(
-                fontSize: isMobile ? 12 : 13,
-                fontWeight: FontWeight.w400,
-                color: isDark
-                    ? AppColors.darkTextSecondary
-                    : AppColors.lightTextSecondary,
-                height: 1.4,
+            if (project.descriptionDe != null && project.descriptionEn != null)
+              SizedBox(height: isMobile ? 8 : 12),
+            if (project.descriptionEn != null)
+              Text(
+                project.descriptionEn!,
+                style: GoogleFonts.inter(
+                  fontSize: isMobile ? 12 : 13,
+                  fontWeight: FontWeight.w400,
+                  color: isDark
+                      ? AppColors.darkTextSecondary
+                      : AppColors.lightTextSecondary,
+                  height: 1.4,
+                ),
               ),
-            ),
           ],
         ),
 
