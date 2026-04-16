@@ -11,13 +11,13 @@ import 'package:web/web.dart' as web;
 class ModelViewerWidget extends StatefulWidget {
   const ModelViewerWidget({super.key});
 
-  /// Trigger the CSS slide-down + fade-in animation.
+  /// Trigger the CSS fade-in + scale-up animation.
   static void reveal() {
     final el = web.document.getElementById('studio-model-viewer')
         as web.HTMLElement?;
     if (el != null) {
       el.style.setProperty('opacity', '1');
-      el.style.setProperty('transform', 'translateY(0)');
+      el.style.setProperty('transform', 'scale(1)');
     }
   }
 
@@ -66,7 +66,7 @@ class _ModelViewerWidgetState extends State<ModelViewerWidget> {
         element.setAttribute('interaction-prompt', 'none');
         element.setAttribute('loading', 'eager');
 
-        // ── Initial state: hidden + shifted up ──────────────────
+        // ── Initial state: hidden + scaled to zero ──────────────
         element.style.setProperty('width', '100%');
         element.style.setProperty('height', '100%');
         element.style.setProperty('background-color', 'transparent');
@@ -74,11 +74,11 @@ class _ModelViewerWidgetState extends State<ModelViewerWidget> {
         element.style.setProperty('outline', 'none');
         element.style.setProperty('border', 'none');
         element.style.setProperty('opacity', '0');
-        element.style.setProperty('transform', 'translateY(-40px)');
-        // CSS transition for the smooth reveal.
+        element.style.setProperty('transform', 'scale(0)');
+        // CSS transition for the gentle fade + scale emergence.
         element.style.setProperty(
           'transition',
-          'opacity 0.5s ease, transform 1.2s cubic-bezier(0.33, 1, 0.68, 1)',
+          'opacity 0.8s ease-out, transform 1.0s cubic-bezier(0.25, 1, 0.5, 1)',
         );
 
         return element;

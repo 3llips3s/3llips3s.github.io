@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../config/app_colors.dart';
 import 'model_viewer_widget.dart';
 import 'text_scramble.dart';
@@ -10,12 +10,15 @@ import 'terminal_typing.dart';
 /// Full-viewport hero section with 3D model and animated intro sequence.
 ///
 /// Animation timeline:
-///   Frame 1    → Scramble "3llips3s" (800 ms)
-///   +400 ms    → Type out "here..." letter-by-letter (no cursor)
+///   Frame 1    → Scramble "3llips3s" (1200 ms)
+///   +400 ms    → Fade in "here..." letter-by-letter (no cursor)
 ///   +300 ms    → Start typing tagline with blinking cursor
-///   +done      → Slide in GitHub CTA + reveal 3D model simultaneously
+///   +500 ms    → Fade-in + scale-up 3D model  &  Fade-in + slide-up CTA
 class HeroSection extends StatefulWidget {
-  const HeroSection({super.key});
+  const HeroSection({super.key, this.onSeeMyWork});
+
+  /// Callback to smooth-scroll to the Project Registry.
+  final VoidCallback? onSeeMyWork;
 
   @override
   State<HeroSection> createState() => _HeroSectionState();
@@ -70,7 +73,7 @@ class _HeroSectionState extends State<HeroSection> {
     Future.delayed(const Duration(milliseconds: 500), () {
       if (!mounted) return;
       setState(() => _showFinale = true);
-      // Trigger the CSS-based smooth slide-down on the model-viewer element.
+      // Trigger the CSS-based fade + scale on the model-viewer element.
       ModelViewerWidget.reveal();
     });
   }
@@ -222,7 +225,7 @@ class _HeroSectionState extends State<HeroSection> {
 
           const SizedBox(height: 40),
 
-          // ── Step 4: GitHub CTA (centred) ──
+          // ── Step 4: "See My Work" CTA (Fade In + Slide Up) ──
           AnimatedSlide(
             offset: _showFinale ? Offset.zero : const Offset(0, 0.5),
             duration: const Duration(milliseconds: 900),
@@ -230,7 +233,7 @@ class _HeroSectionState extends State<HeroSection> {
             child: AnimatedOpacity(
               opacity: _showFinale ? 1.0 : 0.0,
               duration: const Duration(milliseconds: 600),
-              child: Center(child: _githubButton(isDark, textPrimary)),
+              child: Center(child: _seeMyWorkCta(isDark, textPrimary)),
             ),
           ),
         ],
@@ -238,36 +241,46 @@ class _HeroSectionState extends State<HeroSection> {
     );
   }
 
-  // ── GitHub CTA button ──────────────────────────────────────────
+  // ── "See My Work" CTA — borderless text + pulsing arrow ────────
 
-  Widget _githubButton(bool isDark, Color textColor) {
-    return OutlinedButton.icon(
-      onPressed:
-          () => launchUrl(
-            Uri.parse('https://github.com/3llips3s'),
-            mode: LaunchMode.externalApplication,
-          ),
-      style: OutlinedButton.styleFrom(
-        side: BorderSide(
-          color: isDark ? AppColors.darkDivider : AppColors.lightDivider,
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      ),
-      icon: Image.asset(
-        'assets/images/github_icon.png',
-        width: 20,
-        height: 20,
-        color: isDark ? Colors.white : Colors.black,
-      ),
-      label: Text(
-        'GitHub',
-        style: GoogleFonts.inter(
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
-          color: textColor,
+  Widget _seeMyWorkCta(bool isDark, Color textColor) {
+    return GestureDetector(
+      onTap: widget.onSeeMyWork,
+      behavior: HitTestBehavior.opaque,
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Static text — no animation
+            Text(
+              'See My Work',
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: textColor,
+              ),
+            ),
+            const SizedBox(height: 4),
+            // Pulsing arrow — continuous opacity 0.4 → 1.0
+            Icon(
+              Icons.keyboard_arrow_down_rounded,
+              size: 28,
+              color: textColor,
+            )
+                .animate(
+                  onPlay: (controller) => controller.repeat(reverse: true),
+                )
+                .fade(
+                  begin: 0.4,
+                  end: 1.0,
+                  duration: 1200.ms,
+                  curve: Curves.easeInOut,
+                ),
+          ],
         ),
       ),
     );
   }
 }
+

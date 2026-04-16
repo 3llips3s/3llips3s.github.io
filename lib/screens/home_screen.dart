@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../config/app_colors.dart';
 import '../widgets/hero/hero_section.dart';
+import '../widgets/registry/project_registry.dart';
 
 /// The single-page portfolio, assembled from section widgets.
 ///
@@ -15,11 +16,24 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final ScrollController _scrollController = ScrollController();
+  final GlobalKey _registryKey = GlobalKey();
 
   @override
   void dispose() {
     _scrollController.dispose();
     super.dispose();
+  }
+
+  /// Smooth-scroll to the Project Registry section.
+  void _scrollToRegistry() {
+    final context = _registryKey.currentContext;
+    if (context != null) {
+      Scrollable.ensureVisible(
+        context,
+        duration: const Duration(milliseconds: 800),
+        curve: Curves.easeInOutCubic,
+      );
+    }
   }
 
   @override
@@ -32,10 +46,10 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             children: [
               // ── Hero Section ──
-              const HeroSection(),
+              HeroSection(onSeeMyWork: _scrollToRegistry),
 
-              // ── Project Registry (Phase 3) ──
-              _placeholder('PROJECT REGISTRY', height: 400),
+              // ── Project Registry ──
+              ProjectRegistry(key: _registryKey),
 
               // ── Engine Room (Phase 4) ──
               _placeholder('ENGINE ROOM', height: 300),

@@ -34,13 +34,16 @@
 - [cite_start]**Asset:** `assets/3d/hoops_512.glb` [cite: 3]\
 - [cite_start]**Behavior:** Ambient rotation (2 RPM), No Zoom, No Camera Controls [cite: 3]\
 - [cite_start]**Fallback:** Pre-cache and use `assets/images/hoops_poster.webp` as a static poster during load [cite: 4]\
+- **3D Reveal Transition:** Fade In + Scale Up (from `scale(0)` to `scale(1)`) with a soft `cubic-bezier(0.25, 1, 0.5, 1)` curve. No sliding movement.\
 \
 ### Animation Handshake (Sequential)\
-1.  [cite_start]**Identity Scramble:** Animate the text `3llips3s` using a 300ms character-by-character scramble[cite: 11, 12].\
+1.  [cite_start]**Identity Scramble:** Animate the text `3llips3s` using a 1200ms character-by-character scramble[cite: 11, 12].\
 2.  [cite_start]**Soft Reveal:** Fade in the word `here` softly next to the locked name[cite: 13].\
-3.  [cite_start]**Terminal Typing:** Type out the tagline letter-by-letter: *" And I build mobile & web apps @ Studio 10200"*[cite: 13, 14].\
-4.  **Coded CTA:** Slide up and fade in a GitHub button using `assets/images/github_icon.png`.\
-    - **Implementation:** Tint the PNG white (Dark Mode) or black (Light Mode) using the `color` property in `Image.asset` to avoid extra SVG dependencies.\
+3.  [cite_start]**Terminal Typing:** Type out the tagline letter-by-letter: *"I build mobile & web apps @ Studio 10200"*[cite: 13, 14].\
+4.  **"See My Work" CTA:** Fade in and slide up a borderless text + arrow as the final sequence.\
+    - **Text:** "See My Work" in `Inter` font (14px, w500). Static after reveal (no ongoing animation).\
+    - **Arrow:** `Icons.keyboard_arrow_down_rounded` below text. Continuous soft pulse (opacity 0.4 to 1.0, 1200ms cycle).\
+    - **Interaction:** Both wrapped in a single `GestureDetector`. Triggers smooth scroll to the Project Registry via `Scrollable.ensureVisible` (800ms, `easeInOutCubic`).\
 \
 ---\
 \
@@ -126,6 +129,13 @@ Secondary Row:
     - **Desktop:** Scramble tech names for 200ms on `MouseRegion` hover.\
     - **Mobile:** Trigger the same scramble when the card enters the viewport via `VisibilityDetector`.\
     - **Feedback:** Deep Purple (#673AB7) border glow on active items.\
+\
+### GitHub CTA (Base of Engine Room)\
+- **Placement:** At the very bottom of the Engine Room section, below all tech columns.\
+- **Style:** `OutlinedButton.icon` (unlike the borderless Hero CTA, this retains an outline).\
+- **Icon:** `assets/images/github_icon.png` tinted white (Dark) or black (Light) via `color` property.\
+- **Theming:** Outline and icon/text match Engine Room palette (Deep Purple `#673AB7` or high-contrast White/Black).\
+- **Action:** Opens `https://github.com/3llips3s` in external browser.\
 \
 ---\
 \pard\pardeftab720\sa298\partightenfactor0
@@ -229,6 +239,8 @@ INTERACTIVE STEP:
     agent_instructions/\
     ```\
 - **SEO:** Update `web/index.html` with Title: `Studio 10200` and set `hoops_poster.webp` as the Open Graph preview image.\
+- **Build Logic:** All sub-projects **must** be built with: `flutter build web --release --base-href "/[repo-name]/"` flag.\
+- **Animation Timing Alignment:** All animation durations across sections must align with the Hero sequence timing constants so the entire reveal feels orchestrated. Reference: Scramble 1200ms, Here fade +400ms, Tagline 60ms/char, Model+CTA reveal +500ms after tagline, Arrow pulse 1200ms cycle.\
 \
 ---\
 \
