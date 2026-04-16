@@ -1,5 +1,6 @@
 import 'dart:js_interop';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:web/web.dart' as web;
 import '../config/app_colors.dart';
@@ -19,6 +20,7 @@ abstract final class ShareHelper {
   }) async {
     bool shareFailed = false;
 
+    // 1. Attempt Native Web Share API
     try {
       final navigator = web.window.navigator;
       final shareData = web.ShareData(
@@ -30,33 +32,42 @@ abstract final class ShareHelper {
       // Note: navigator.share requires HTTPS. 
       // It will throw an error on localhost/HTTP causing the fallback to run.
       await navigator.share(shareData).toDart;
-      return;
+      return; // Share sheet successfully triggered!
     } catch (_) {
       shareFailed = true;
     }
 
+    // 2. Fallback: Flutter Native Clipboard
     if (shareFailed && context.mounted) {
-      // Fallback: copy the URL to the clipboard.
       try {
-        web.window.navigator.clipboard.writeText(url);
-        _showCopySnackbar(context, url);
+        await Clipboard.setData(ClipboardData(text: url));
+        if (context.mounted) _showSnackbar(context, url, success: true);
       } catch (_) {
-        // Clipboard API also blocked — silently fail or alert.
+        // Even the clipboard failed (likely due to strict HTTP security policies).
+        if (context.mounted) _showSnackbar(context, url, success: false);
       }
     }
   }
 
-  static void _showCopySnackbar(BuildContext context, String url) {
+  static void _showSnackbar(BuildContext context, String url, {required bool success}) {
     ScaffoldMessenger.of(context).clearSnackBars();
+    
+    final color = success ? AppColors.primary : Colors.redAccent.shade200;
+    final icon = success ? Icons.check_circle_outline : Icons.error_outline_rounded;
+    final text = success ? 'Link copied to clipboard' : 'Unable to share on current network';
+
+    // Calculate margin to push the snackbar precisely to the top of the screen
+    final topMargin = MediaQuery.sizeOf(context).height - 100;
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(
           children: [
-            const Icon(Icons.check_circle_outline, color: Colors.white, size: 20),
+            Icon(icon, color: Colors.white, size: 20),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                'Link copied to clipboard',
+                text,
                 style: GoogleFonts.inter(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
@@ -66,10 +77,11 @@ abstract final class ShareHelper {
             ),
           ],
         ),
-        backgroundColor: AppColors.primary,
+        backgroundColor: color,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        margin: const EdgeInsets.only(bottom: 24, left: 24, right: 24),
+        // Hack to simulate top-aligned snackbar via bottom margin calculation
+        margin: EdgeInsets.only(bottom: topMargin > 0 ? topMargin : 24, left: 24, right: 24),
         duration: const Duration(seconds: 3),
         elevation: 8,
       ),
