@@ -14,17 +14,13 @@ abstract final class ShareHelper {
   }) async {
     try {
       final navigator = web.window.navigator;
-      // Check if the Share API is available.
-      // ignore: unnecessary_null_comparison
-      if (navigator.share != null) {
-        final shareData = web.ShareData(
-          title: title,
-          text: text,
-          url: url,
-        );
-        navigator.share(shareData);
-        return;
-      }
+      final shareData = web.ShareData(
+        title: title,
+        text: text,
+        url: url,
+      );
+      navigator.share(shareData);
+      return;
     } catch (_) {
       // Share API not available or failed — fall through to clipboard.
     }
