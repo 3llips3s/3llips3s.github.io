@@ -53,9 +53,13 @@ abstract final class ShareHelper {
     ScaffoldMessenger.of(context).clearSnackBars();
 
     // A washed-out purple that guarantees black text is highly readable, even in dark mode
-    final Color washedPurple = Color.lerp(AppColors.primary, Colors.white, 0.4)!;
+    final Color washedPurple =
+        Color.lerp(AppColors.primary, Colors.white, 0.4)!;
 
-    final color = success ? washedPurple.withValues(alpha: 0.95) : Colors.redAccent.shade200;
+    final color =
+        success
+            ? washedPurple.withValues(alpha: 0.95)
+            : Colors.redAccent.shade200;
     final icon = success ? Icons.check_rounded : Icons.error_outline_rounded;
     final text =
         success
@@ -63,7 +67,7 @@ abstract final class ShareHelper {
             : 'Unable to share on current network';
 
     // Calculate margin to push the snackbar precisely to the top of the screen
-    final topMargin = MediaQuery.sizeOf(context).height - 64;
+    final topMargin = MediaQuery.sizeOf(context).height - 90;
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

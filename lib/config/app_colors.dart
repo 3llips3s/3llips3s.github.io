@@ -21,10 +21,11 @@ abstract final class AppColors {
   // ── Dark Theme ─────────────────────────────────────────────────
   static const Color darkScaffold = Color(0xFF000000);
   static const Color darkSurface = Color(0xFF121212);
-  static const Color darkCard = Color(0xFF1E1E1E);
+  static const Color darkCard = Color(0xFF130F1C);
   static const Color darkTextPrimary = Color(0xFFFFFFFF);
   static const Color darkTextSecondary = Color(0xB3FFFFFF); // 70% white
-  static const Color darkDivider = Color(0x33FFFFFF); // 20% white
+  static const Color darkDivider = Color(0x0DFFFFFF); // 5% white (Ghost Cards)
+  static const Color darkDividerStrong = Color(0x33FFFFFF); // 20% white (Buttons)
 
   // ── Light Theme ────────────────────────────────────────────────
   static const Color lightScaffold = Color(0xFFFFFFFF);
@@ -32,7 +33,8 @@ abstract final class AppColors {
   static const Color lightCard = Color(0xFFFFFFFF);
   static const Color lightTextPrimary = Color(0xFF000000);
   static const Color lightTextSecondary = Color(0xB3000000); // 70% black
-  static const Color lightDivider = Color(0x33000000); // 20% black
+  static const Color lightDivider = Color(0x1A000000); // 10% black
+  static const Color lightDividerStrong = Color(0x33000000); // 20% black
 
   // ── Functional ─────────────────────────────────────────────────
   static const Color glowBorder = primary; // Used on engine room hover

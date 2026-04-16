@@ -52,25 +52,29 @@ class ProjectCard extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
         child: Padding(
-          // Master padding ensures symmetric flush alignment for both columns
-          padding: EdgeInsets.symmetric(
-            vertical: isMobile ? 24 : 32,
-            horizontal: isMobile ? 16 : 32,
+          // Master padding explicitly offset (top reduced) because Flutter's internal
+          // typographic line-height math forces visual top-heaviness when mathematically symmetric.
+          padding: EdgeInsets.only(
+            top: isMobile ? 12 : 24, // Optically equal to left/right
+            bottom: isMobile ? 24 : 32, // Physical mathematical bound
+            left: isMobile ? 16 : 32, // Standard lateral bound
+            right: isMobile ? 16 : 32, // Standard lateral bound
           ),
           child: IntrinsicHeight(
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: imageOnLeft
-                  ? [
-                      imageCol,
-                      SizedBox(width: isMobile ? 16 : 32), // Direct gap
-                      textCol,
-                    ]
-                  : [
-                      textCol,
-                      SizedBox(width: isMobile ? 16 : 32),
-                      imageCol,
-                    ],
+              children:
+                  imageOnLeft
+                      ? [
+                        imageCol,
+                        SizedBox(width: isMobile ? 16 : 32), // Direct gap
+                        textCol,
+                      ]
+                      : [
+                        textCol,
+                        SizedBox(width: isMobile ? 16 : 32),
+                        imageCol,
+                      ],
             ),
           ),
         ),
@@ -89,13 +93,14 @@ class ProjectCard extends StatelessWidget {
           child: Image.asset(
             project.screenshotPath,
             fit: BoxFit.contain,
-            errorBuilder: (_, __, ___) => Center(
-              child: Icon(
-                Icons.image_outlined,
-                color: AppColors.darkTextSecondary,
-                size: 48,
-              ),
-            ),
+            errorBuilder:
+                (_, __, ___) => Center(
+                  child: Icon(
+                    Icons.image_outlined,
+                    color: AppColors.darkTextSecondary,
+                    size: 48,
+                  ),
+                ),
           ),
         ),
         const SizedBox(height: 16), // Minimum gap
@@ -150,9 +155,10 @@ class ProjectCard extends StatelessWidget {
                 style: GoogleFonts.inter(
                   fontSize: isMobile ? 12 : 13,
                   fontWeight: FontWeight.w400,
-                  color: isDark
-                      ? AppColors.darkTextSecondary
-                      : AppColors.lightTextSecondary,
+                  color:
+                      isDark
+                          ? AppColors.darkTextSecondary
+                          : AppColors.lightTextSecondary,
                   height: 1.4,
                 ),
               ),
@@ -225,13 +231,16 @@ class ProjectCard extends StatelessWidget {
 
   // ── Secondary: Share + Feedback — centered below image ──────────────
   Widget _secondaryActions(BuildContext context, Color textSecondary) {
+    // Mute the icons heavily so the eye ignores them until explicitly sought out
+    final mutedColor = textSecondary.withValues(alpha: 0.3);
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         _iconButton(
           icon: Icons.share_rounded,
           tooltip: 'Share',
-          color: textSecondary,
+          color: mutedColor,
           onPressed:
               () => ShareHelper.share(
                 context, // Pass context for the fallback snackbar
@@ -246,7 +255,7 @@ class ProjectCard extends StatelessWidget {
         _iconButton(
           icon: Icons.feedback_outlined,
           tooltip: 'Feedback',
-          color: textSecondary,
+          color: mutedColor,
           onPressed: () {},
         ),
       ],
@@ -276,7 +285,10 @@ class ProjectCard extends StatelessWidget {
             )
             : OutlinedButton.styleFrom(
               side: BorderSide(
-                color: isDark ? AppColors.darkDivider : AppColors.lightDivider,
+                color:
+                    isDark
+                        ? AppColors.darkDividerStrong
+                        : AppColors.lightDividerStrong,
               ),
               padding: padding,
               shape: RoundedRectangleBorder(
