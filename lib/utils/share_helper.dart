@@ -23,13 +23,9 @@ abstract final class ShareHelper {
     // 1. Attempt Native Web Share API
     try {
       final navigator = web.window.navigator;
-      final shareData = web.ShareData(
-        title: title,
-        text: text,
-        url: url,
-      );
-      
-      // Note: navigator.share requires HTTPS. 
+      final shareData = web.ShareData(title: title, text: text, url: url);
+
+      // Note: navigator.share requires HTTPS.
       // It will throw an error on localhost/HTTP causing the fallback to run.
       await navigator.share(shareData).toDart;
       return; // Share sheet successfully triggered!
@@ -49,30 +45,40 @@ abstract final class ShareHelper {
     }
   }
 
-  static void _showSnackbar(BuildContext context, String url, {required bool success}) {
+  static void _showSnackbar(
+    BuildContext context,
+    String url, {
+    required bool success,
+  }) {
     ScaffoldMessenger.of(context).clearSnackBars();
-    
-    final color = success ? AppColors.primary : Colors.redAccent.shade200;
-    final icon = success ? Icons.check_circle_outline : Icons.error_outline_rounded;
-    final text = success ? 'Link copied to clipboard' : 'Unable to share on current network';
+
+    // A washed-out purple that guarantees black text is highly readable, even in dark mode
+    final Color washedPurple = Color.lerp(AppColors.primary, Colors.white, 0.4)!;
+
+    final color = success ? washedPurple.withValues(alpha: 0.95) : Colors.redAccent.shade200;
+    final icon = success ? Icons.check_rounded : Icons.error_outline_rounded;
+    final text =
+        success
+            ? 'Link copied to clipboard'
+            : 'Unable to share on current network';
 
     // Calculate margin to push the snackbar precisely to the top of the screen
-    final topMargin = MediaQuery.sizeOf(context).height - 100;
+    final topMargin = MediaQuery.sizeOf(context).height - 64;
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: Colors.white, size: 20),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                text,
-                style: GoogleFonts.inter(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white,
-                ),
+            Icon(icon, color: Colors.black87, size: 20),
+            const SizedBox(width: 8),
+            Text(
+              text,
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+                letterSpacing: 0.2,
               ),
             ),
           ],
@@ -81,7 +87,11 @@ abstract final class ShareHelper {
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         // Hack to simulate top-aligned snackbar via bottom margin calculation
-        margin: EdgeInsets.only(bottom: topMargin > 0 ? topMargin : 24, left: 24, right: 24),
+        margin: EdgeInsets.only(
+          bottom: topMargin > 0 ? topMargin : 24,
+          left: 24,
+          right: 24,
+        ),
         duration: const Duration(seconds: 3),
         elevation: 8,
       ),
