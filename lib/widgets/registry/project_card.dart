@@ -29,7 +29,7 @@ class ProjectCard extends StatelessWidget {
 
     final imageCol = Expanded(
       flex: isMobile ? 40 : 35,
-      child: _screenshotColumn(textSecondary),
+      child: _screenshotColumn(context, textSecondary),
     );
 
     final textCol = Expanded(
@@ -79,7 +79,7 @@ class ProjectCard extends StatelessWidget {
   }
 
   // ── Screenshot Column ─────────────────────────────────────────────
-  Widget _screenshotColumn(Color textSecondary) {
+  Widget _screenshotColumn(BuildContext context, Color textSecondary) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -100,7 +100,7 @@ class ProjectCard extends StatelessWidget {
         ),
         const SizedBox(height: 16), // Minimum gap
         // ── Secondary action buttons (share + feedback) ──
-        _secondaryActions(textSecondary),
+        _secondaryActions(context, textSecondary),
       ],
     );
   }
@@ -224,7 +224,7 @@ class ProjectCard extends StatelessWidget {
   }
 
   // ── Secondary: Share + Feedback — centered below image ──────────────
-  Widget _secondaryActions(Color textSecondary) {
+  Widget _secondaryActions(BuildContext context, Color textSecondary) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -234,6 +234,7 @@ class ProjectCard extends StatelessWidget {
           color: textSecondary,
           onPressed:
               () => ShareHelper.share(
+                context, // Pass context for the fallback snackbar
                 title: project.name,
                 text: '${project.name} — ${project.descriptionEn}',
                 url:
