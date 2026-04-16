@@ -26,10 +26,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   /// Smooth-scroll to the Project Registry section.
   void _scrollToRegistry() {
-    final context = _registryKey.currentContext;
-    if (context != null) {
-      Scrollable.ensureVisible(
-        context,
+    final ctx = _registryKey.currentContext;
+    if (ctx != null) {
+      final box = ctx.findRenderObject() as RenderBox;
+      final target =
+          box.localToGlobal(Offset.zero).dy + _scrollController.offset;
+      _scrollController.animateTo(
+        target,
         duration: const Duration(milliseconds: 800),
         curve: Curves.easeInOutCubic,
       );

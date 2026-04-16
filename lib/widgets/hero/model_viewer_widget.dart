@@ -78,7 +78,7 @@ class _ModelViewerWidgetState extends State<ModelViewerWidget> {
         // CSS transition for the gentle fade + scale emergence.
         element.style.setProperty(
           'transition',
-          'opacity 0.8s ease-out, transform 1.0s cubic-bezier(0.25, 1, 0.5, 1)',
+          'opacity 1.2s ease-out, transform 1.6s cubic-bezier(0.25, 1, 0.5, 1)',
         );
 
         return element;

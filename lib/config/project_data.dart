@@ -40,9 +40,8 @@ abstract final class ProjectData {
     ProjectInfo(
       name: 'Hangmensch',
       descriptionDe:
-          'Rette den Hangmensch vor dem Galgen, indem du die richtigen Artikel errätst.',
-      descriptionEn:
-          'Save the "Hangmensch" from the gallows by guessing the correct noun genders.',
+          'Entkomme dem Galgen, indem du die richtigen Artikel errätst.',
+      descriptionEn: 'Escape the gallows by guessing the correct noun genders.',
       screenshotPath: 'assets/screenshots/hangmensch.png',
       webUrl: 'https://studio10200.dev/hangmensch/',
       apkUrl:
@@ -52,7 +51,7 @@ abstract final class ProjectData {
     ProjectInfo(
       name: 'Tic Tac Zwö',
       descriptionDe:
-          'Setze dein X oder O mit dem richtigen Genus und schlage deine Gegner im Solo-, Pass-and-Play- oder Online-Modus mit Bestenliste.',
+          'Setze dein X oder Ö mit dem richtigen Genus und schlage deine Gegner im Solo-, Pass-und-Play- oder Online-Modus mit Leaderboard.',
       descriptionEn:
           'Claim your X or O with the correct noun gender and beat your opponents in solo, pass-and-play, or online mode with a leaderboard.',
       screenshotPath: 'assets/screenshots/zwo.png',

@@ -5,18 +5,14 @@ import '../../config/app_colors.dart';
 import '../../config/project_data.dart';
 import 'project_card.dart';
 
-/// Section that displays all projects in a leap-frog grid.
+/// Section that displays all projects in a stacked vertical layout.
 ///
-/// Cards alternate between image-left and image-right layouts.
-/// Each card slides up and fades in on viewport entry via [flutter_animate].
+/// Each card slides up and fades in with a staggered delay via [flutter_animate].
 class ProjectRegistry extends StatelessWidget {
   const ProjectRegistry({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
-    final Color textPrimary =
-        isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary;
     final bool isMobile = MediaQuery.sizeOf(context).width < 768;
 
     return Padding(
@@ -29,28 +25,17 @@ class ProjectRegistry extends StatelessWidget {
         children: [
           // ── Section heading ──
           Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: isMobile ? 24 : 48,
-            ),
+            padding: EdgeInsets.symmetric(horizontal: isMobile ? 24 : 48),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '[ PROJECT REGISTRY ]',
+                  '[ PROJECTS ]',
                   style: GoogleFonts.jetBrainsMono(
-                    fontSize: 12,
+                    fontSize: 16,
                     fontWeight: FontWeight.w500,
                     color: AppColors.primary,
                     letterSpacing: 2,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Things I\'ve built',
-                  style: GoogleFonts.inter(
-                    fontSize: 28,
-                    fontWeight: FontWeight.w700,
-                    color: textPrimary,
                   ),
                 ),
               ],
@@ -62,14 +47,11 @@ class ProjectRegistry extends StatelessWidget {
           // ── Project cards ──
           ...List.generate(ProjectData.projects.length, (index) {
             return ProjectCard(
-              project: ProjectData.projects[index],
-              imageOnLeft: index.isEven,
-            )
-                .animate()
-                .fadeIn(
-                  duration: 600.ms,
-                  delay: (150 * index).ms,
+                  project: ProjectData.projects[index],
+                  imageOnLeft: index % 2 == 0,
                 )
+                .animate()
+                .fadeIn(duration: 600.ms, delay: (150 * index).ms)
                 .slideY(
                   begin: 0.05,
                   end: 0,

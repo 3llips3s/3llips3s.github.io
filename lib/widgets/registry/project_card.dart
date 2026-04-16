@@ -5,10 +5,11 @@ import '../../config/project_data.dart';
 import '../../utils/share_helper.dart';
 import '../../utils/url_launcher_helper.dart';
 
-/// Individual project card with screenshot, description, and action buttons.
+/// Side-by-side project card for portrait screenshots.
 ///
-/// Layout alternates between image-left/text-right and text-left/image-right
-/// based on [imageOnLeft]. On mobile (< 768px), this always stacks vertically.
+/// Layout is side-by-side (Row) on both mobile and desktop so the tall
+/// screenshot is fully visible without dominating vertical scroll space.
+/// Buttons stack vertically on mobile to fit the narrower text column.
 class ProjectCard extends StatelessWidget {
   const ProjectCard({
     super.key,
@@ -23,10 +24,22 @@ class ProjectCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
     final bool isMobile = MediaQuery.sizeOf(context).width < 768;
+    final Color textSecondary =
+        isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary;
+
+    final imageCol = Expanded(
+      flex: isMobile ? 40 : 35,
+      child: _screenshotColumn(textSecondary),
+    );
+
+    final textCol = Expanded(
+      flex: isMobile ? 60 : 65,
+      child: _content(isDark, isMobile),
+    );
 
     return Container(
       margin: EdgeInsets.symmetric(
-        horizontal: isMobile ? 16 : 48,
+        horizontal: isMobile ? 12 : 48,
         vertical: 24,
       ),
       decoration: BoxDecoration(
@@ -35,61 +48,29 @@ class ProjectCard extends StatelessWidget {
         border: Border.all(
           color: isDark ? AppColors.darkDivider : AppColors.lightDivider,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.08),
-            blurRadius: 24,
-            offset: const Offset(0, 8),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: Padding(
+          // Master padding ensures symmetric flush alignment for both columns
+          padding: EdgeInsets.symmetric(
+            vertical: isMobile ? 24 : 32,
+            horizontal: isMobile ? 16 : 32,
           ),
-        ],
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: isMobile
-          ? _mobileLayout(context, isDark)
-          : _desktopLayout(context, isDark),
-    );
-  }
-
-  // ── Desktop: side-by-side with alternating order ─────────────
-  Widget _desktopLayout(BuildContext context, bool isDark) {
-    final screenshot = _screenshot();
-    final content = _content(context, isDark);
-
-    return IntrinsicHeight(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: imageOnLeft
-            ? [Expanded(child: screenshot), Expanded(child: content)]
-            : [Expanded(child: content), Expanded(child: screenshot)],
-      ),
-    );
-  }
-
-  // ── Mobile: stacked vertically ───────────────────────────────
-  Widget _mobileLayout(BuildContext context, bool isDark) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        _screenshot(),
-        _content(context, isDark),
-      ],
-    );
-  }
-
-  // ── Screenshot ────────────────────────────────────────────────
-  Widget _screenshot() {
-    return AspectRatio(
-      aspectRatio: 16 / 9,
-      child: Image.asset(
-        project.screenshotPath,
-        fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => Container(
-          color: AppColors.darkSurface,
-          child: const Center(
-            child: Icon(
-              Icons.image_outlined,
-              color: AppColors.darkTextSecondary,
-              size: 48,
+          child: IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: imageOnLeft
+                  ? [
+                      imageCol,
+                      SizedBox(width: isMobile ? 16 : 32), // Direct gap
+                      textCol,
+                    ]
+                  : [
+                      textCol,
+                      SizedBox(width: isMobile ? 16 : 32),
+                      imageCol,
+                    ],
             ),
           ),
         ),
@@ -97,177 +78,246 @@ class ProjectCard extends StatelessWidget {
     );
   }
 
-  // ── Text content + actions ────────────────────────────────────
-  Widget _content(BuildContext context, bool isDark) {
-    final Color textPrimary =
-        isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary;
-    final Color textSecondary =
-        isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary;
-
-    return Padding(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // ── Title ──
-          Text(
-            project.name,
-            style: GoogleFonts.jetBrainsMono(
-              fontSize: 22,
-              fontWeight: FontWeight.w700,
-              color: textPrimary,
-            ),
-          ),
-          const SizedBox(height: 12),
-
-          // ── German description ──
-          Text(
-            project.descriptionDe,
-            style: GoogleFonts.inter(
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-              color: textPrimary,
-              height: 1.5,
-            ),
-          ),
-          const SizedBox(height: 8),
-
-          // ── English translation ──
-          Text(
-            project.descriptionEn,
-            style: GoogleFonts.inter(
-              fontSize: 13,
-              fontWeight: FontWeight.w400,
-              color: textSecondary.withValues(alpha: 0.7),
-              fontStyle: FontStyle.italic,
-              height: 1.5,
-            ),
-          ),
-          const SizedBox(height: 24),
-
-          // ── Primary action buttons ──
-          _primaryActions(isDark),
-
-          const SizedBox(height: 12),
-
-          // ── Secondary action buttons (share + feedback) ──
-          _secondaryActions(isDark, textSecondary),
-        ],
-      ),
-    );
-  }
-
-  // ── Primary: Play / Download ──────────────────────────────────
-  Widget _primaryActions(bool isDark) {
-    return Wrap(
-      spacing: 12,
-      runSpacing: 8,
+  // ── Screenshot Column ─────────────────────────────────────────────
+  Widget _screenshotColumn(Color textSecondary) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        if (project.webUrl != null)
-          _actionButton(
-            label: 'Play',
-            icon: Icons.play_arrow_rounded,
-            onPressed: () => UrlLauncherHelper.openUrl(project.webUrl!),
-            filled: true,
-            isDark: isDark,
+        // Image scales to column width, establishing natural height
+        ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: Image.asset(
+            project.screenshotPath,
+            fit: BoxFit.contain,
+            errorBuilder: (_, __, ___) => Center(
+              child: Icon(
+                Icons.image_outlined,
+                color: AppColors.darkTextSecondary,
+                size: 48,
+              ),
+            ),
           ),
-        if (project.apkUrl != null)
-          _actionButton(
-            label: 'Download',
-            icon: Icons.download_rounded,
-            onPressed: () => UrlLauncherHelper.openUrl(project.apkUrl!),
-            filled: false,
-            isDark: isDark,
-          ),
+        ),
+        const SizedBox(height: 16), // Minimum gap
+        // ── Secondary action buttons (share + feedback) ──
+        _secondaryActions(textSecondary),
       ],
     );
   }
 
-  // ── Secondary: Share + Feedback ───────────────────────────────
-  Widget _secondaryActions(bool isDark, Color textSecondary) {
+  // ── Text content + actions ────────────────────────────────────────
+  Widget _content(bool isDark, bool isMobile) {
+    final Color textPrimary =
+        isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        // ── Title (Flush Top) ──
+        Text(
+          project.name,
+          style: GoogleFonts.jetBrainsMono(
+            fontSize: isMobile ? 18 : 22,
+            fontWeight: FontWeight.w700,
+            color: textPrimary,
+            height: 1.2,
+          ),
+        ),
+
+        const SizedBox(height: 16),
+
+        // ── Descriptions (Centered) ──
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              project.descriptionDe,
+              style: GoogleFonts.inter(
+                fontSize: isMobile ? 13 : 15,
+                fontWeight: FontWeight.w400,
+                color: textPrimary,
+                height: 1.5,
+              ),
+            ),
+            SizedBox(height: isMobile ? 8 : 12),
+            Text(
+              project.descriptionEn,
+              style: GoogleFonts.inter(
+                fontSize: isMobile ? 12 : 13,
+                fontWeight: FontWeight.w400,
+                color: isDark
+                    ? AppColors.darkTextSecondary
+                    : AppColors.lightTextSecondary,
+                height: 1.4,
+              ),
+            ),
+          ],
+        ),
+
+        const SizedBox(height: 16),
+
+        // ── Primary action buttons (Flush Bottom) ──
+        _primaryActions(isDark, isMobile),
+      ],
+    );
+  }
+
+  // ── Primary: Download (left/top) / Play (right/bottom) ────────────
+  Widget _primaryActions(bool isDark, bool isMobile) {
+    final bool hasPlay = project.webUrl != null;
+    final bool hasDownload = project.apkUrl != null;
+
+    final List<Widget> buttons = [];
+
+    if (hasDownload) {
+      buttons.add(
+        _actionButton(
+          label: 'Download',
+          icon: Icons.android,
+          onPressed: () => UrlLauncherHelper.openUrl(project.apkUrl!),
+          filled: false,
+          isDark: isDark,
+          isMobile: isMobile,
+        ),
+      );
+    }
+
+    if (hasPlay) {
+      buttons.add(
+        _actionButton(
+          label: 'Play',
+          icon: Icons.play_arrow_rounded,
+          onPressed: () => UrlLauncherHelper.openUrl(project.webUrl!),
+          filled: true,
+          isDark: isDark,
+          isMobile: isMobile,
+        ),
+      );
+    }
+
+    if (buttons.isEmpty) return const SizedBox.shrink();
+
+    if (buttons.length == 1) {
+      return SizedBox(width: double.infinity, child: buttons.first);
+    }
+
+    // Two buttons: stack vertically on mobile, side-by-side on desktop
+    if (isMobile) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [buttons[0], const SizedBox(height: 8), buttons[1]],
+      );
+    } else {
+      return Row(
+        children: [
+          Expanded(child: buttons[0]),
+          const SizedBox(width: 16),
+          Expanded(child: buttons[1]),
+        ],
+      );
+    }
+  }
+
+  // ── Secondary: Share + Feedback — centered below image ──────────────
+  Widget _secondaryActions(Color textSecondary) {
     return Row(
-      mainAxisAlignment:
-          imageOnLeft ? MainAxisAlignment.start : MainAxisAlignment.end,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         _iconButton(
           icon: Icons.share_rounded,
           tooltip: 'Share',
           color: textSecondary,
-          onPressed: () => ShareHelper.share(
-            title: project.name,
-            text: '${project.name} — ${project.descriptionEn}',
-            url: project.webUrl ??
-                'https://github.com/${ProjectData.githubOrg}/${project.repoName}',
-          ),
+          onPressed:
+              () => ShareHelper.share(
+                title: project.name,
+                text: '${project.name} — ${project.descriptionEn}',
+                url:
+                    project.webUrl ??
+                    'https://github.com/${ProjectData.githubOrg}/${project.repoName}',
+              ),
         ),
-        const SizedBox(width: 4),
+        const SizedBox(width: 8),
         _iconButton(
           icon: Icons.feedback_outlined,
           tooltip: 'Feedback',
           color: textSecondary,
-          onPressed: () {
-            // Wiredash integration deferred to Phase 5.
-          },
+          onPressed: () {},
         ),
       ],
     );
   }
 
-  // ── Filled / outlined action button ───────────────────────────
+  // ── Action Button Builder ──────────────────────────────────────────
   Widget _actionButton({
     required String label,
     required IconData icon,
     required VoidCallback onPressed,
     required bool filled,
     required bool isDark,
+    required bool isMobile,
   }) {
-    if (filled) {
-      return FilledButton.icon(
-        onPressed: onPressed,
-        style: FilledButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-        ),
-        icon: Icon(icon, size: 18),
-        label: Text(
+    final padding = EdgeInsets.symmetric(vertical: isMobile ? 12 : 14);
+
+    final buttonStyle =
+        filled
+            ? FilledButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              padding: padding,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            )
+            : OutlinedButton.styleFrom(
+              side: BorderSide(
+                color: isDark ? AppColors.darkDivider : AppColors.lightDivider,
+              ),
+              padding: padding,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            );
+
+    final child = Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(icon, size: 18),
+        const SizedBox(width: 8),
+        Text(
           label,
           style: GoogleFonts.inter(
-            fontSize: 14,
+            fontSize: isMobile ? 13 : 14,
             fontWeight: FontWeight.w600,
+            color:
+                filled
+                    ? Colors.white
+                    : (isDark
+                        ? AppColors.darkTextPrimary
+                        : AppColors.lightTextPrimary),
           ),
         ),
+      ],
+    );
+
+    if (filled) {
+      return FilledButton(
+        onPressed: onPressed,
+        style: buttonStyle,
+        child: child,
       );
     }
 
-    return OutlinedButton.icon(
+    return OutlinedButton(
       onPressed: onPressed,
-      style: OutlinedButton.styleFrom(
-        side: BorderSide(
-          color: isDark ? AppColors.darkDivider : AppColors.lightDivider,
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-      ),
-      icon: Icon(icon, size: 18),
-      label: Text(
-        label,
-        style: GoogleFonts.inter(
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-          color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
-        ),
-      ),
+      style: buttonStyle,
+      child: child,
     );
   }
 
-  // ── Small icon button ─────────────────────────────────────────
+  // ── Small icon button ──────────────────────────────────────────────
   Widget _iconButton({
     required IconData icon,
     required String tooltip,
@@ -276,7 +326,7 @@ class ProjectCard extends StatelessWidget {
   }) {
     return IconButton(
       onPressed: onPressed,
-      icon: Icon(icon, size: 20, color: color),
+      icon: Icon(icon, size: 22, color: color),
       tooltip: tooltip,
       splashRadius: 20,
     );

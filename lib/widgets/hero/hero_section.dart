@@ -95,9 +95,10 @@ class _HeroSectionState extends State<HeroSection> {
     return SizedBox(
       width: double.infinity,
       height: screenSize.height,
-      child: isMobile
-          ? _mobileLayout(isDark, screenSize.height)
-          : _desktopLayout(isDark),
+      child:
+          isMobile
+              ? _mobileLayout(isDark, screenSize.height)
+              : _desktopLayout(isDark),
     );
   }
 
@@ -135,7 +136,7 @@ class _HeroSectionState extends State<HeroSection> {
     return SafeArea(
       child: Column(
         children: [
-          const Spacer(), // ← equal space above model
+          const Spacer(flex: 3), // ← equal space above model
           SizedBox(
             height: screenHeight * 0.32,
             child: Padding(
@@ -143,7 +144,7 @@ class _HeroSectionState extends State<HeroSection> {
               child: const ModelViewerWidget(),
             ),
           ),
-          const Spacer(), // ← equal space below model
+          const Spacer(flex: 3), // ← equal space below model
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: _textContent(isDark),
@@ -206,7 +207,7 @@ class _HeroSectionState extends State<HeroSection> {
             ],
           ),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
 
           // ── Step 3: Terminal typing (flush-left with username) ──
           AnimatedOpacity(
@@ -223,7 +224,7 @@ class _HeroSectionState extends State<HeroSection> {
             ),
           ),
 
-          const SizedBox(height: 40),
+          const SizedBox(height: 120),
 
           // ── Step 4: "See My Work" CTA (Fade In + Slide Up) ──
           AnimatedSlide(
@@ -254,20 +255,16 @@ class _HeroSectionState extends State<HeroSection> {
           children: [
             // Static text — no animation
             Text(
-              'See My Work',
+              'see my work',
               style: GoogleFonts.inter(
-                fontSize: 14,
+                fontSize: 16,
                 fontWeight: FontWeight.w500,
                 color: textColor,
               ),
             ),
             const SizedBox(height: 4),
             // Pulsing arrow — continuous opacity 0.4 → 1.0
-            Icon(
-              Icons.keyboard_arrow_down_rounded,
-              size: 28,
-              color: textColor,
-            )
+            Icon(Icons.keyboard_arrow_down_rounded, size: 48, color: textColor)
                 .animate(
                   onPlay: (controller) => controller.repeat(reverse: true),
                 )
@@ -283,4 +280,3 @@ class _HeroSectionState extends State<HeroSection> {
     );
   }
 }
-
