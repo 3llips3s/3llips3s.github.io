@@ -55,7 +55,7 @@ class ProjectCard extends StatelessWidget {
           // Master padding explicitly offset (top reduced) because Flutter's internal
           // typographic line-height math forces visual top-heaviness when mathematically symmetric.
           padding: EdgeInsets.only(
-            top: isMobile ? 12 : 24, // Optically equal to left/right
+            top: isMobile ? 16 : 28, // Finetuned optical center
             bottom: isMobile ? 24 : 32, // Physical mathematical bound
             left: isMobile ? 16 : 32, // Standard lateral bound
             right: isMobile ? 16 : 32, // Standard lateral bound
@@ -88,22 +88,31 @@ class ProjectCard extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         // Image scales to column width, establishing natural height
-        ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: Image.asset(
-            project.screenshotPath,
-            fit: BoxFit.contain,
-            errorBuilder:
-                (_, __, ___) => Center(
-                  child: Icon(
-                    Icons.image_outlined,
-                    color: AppColors.darkTextSecondary,
-                    size: 48,
-                  ),
+        MouseRegion(
+          cursor: SystemMouseCursors.zoomIn,
+          child: GestureDetector(
+            onTap: () => _openLightbox(context),
+            child: Hero(
+              tag: project.screenshotPath,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.asset(
+                  project.screenshotPath,
+                  fit: BoxFit.contain,
+                  errorBuilder:
+                      (_, __, ___) => Center(
+                        child: Icon(
+                          Icons.image_outlined,
+                          color: AppColors.darkTextSecondary,
+                          size: 48,
+                        ),
+                      ),
                 ),
+              ),
+            ),
           ),
         ),
-        const SizedBox(height: 16), // Minimum gap
+        const SizedBox(height: 24), // Minimum gap
         // ── Secondary action buttons (share + feedback) ──
         _secondaryActions(context, textSecondary),
       ],
@@ -345,6 +354,75 @@ class ProjectCard extends StatelessWidget {
       icon: Icon(icon, size: 22, color: color),
       tooltip: tooltip,
       splashRadius: 20,
+    );
+  }
+
+  // ── Lightbox Viewer ────────────────────────────────────────────────
+  void _openLightbox(BuildContext context) {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: 'Close Image Viewer',
+      barrierColor: Colors.black.withValues(alpha: 0.95), // Deep immersion
+      transitionDuration: const Duration(milliseconds: 400),
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: CurvedAnimation(parent: animation, curve: Curves.easeOutCirc),
+          child: child,
+        );
+      },
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return SafeArea(
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              // Core Image View (Pan/Zoom capable)
+              Center(
+                child: InteractiveViewer(
+                  maxScale: 4.0,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 80),
+                    child: Hero(
+                      tag: project.screenshotPath,
+                      child: Image.asset(
+                        project.screenshotPath,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              // Floating Dismiss Button aligned to bottom
+              Positioned(
+                bottom: 32,
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: OutlinedButton.icon(
+                    onPressed: () => Navigator.of(context).pop(),
+                    icon: const Icon(Icons.close_rounded, size: 18),
+                    label: Text(
+                      'Close',
+                      style: GoogleFonts.inter(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.transparent, // Let barrier act as background
+                      side: const BorderSide(color: AppColors.darkDividerStrong),
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)), // Pill
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
