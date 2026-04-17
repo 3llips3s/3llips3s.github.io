@@ -29,6 +29,7 @@ class _HeroSectionState extends State<HeroSection> {
   String _hereText = '';
   bool _startTyping = false;
   bool _showFinale = false;
+  bool _showFinalName = false;
 
   final GlobalKey<TerminalTypingState> _typingKey = GlobalKey();
   Timer? _hereTimer;
@@ -196,12 +197,26 @@ class _HeroSectionState extends State<HeroSection> {
             crossAxisAlignment: CrossAxisAlignment.baseline,
             textBaseline: TextBaseline.alphabetic,
             children: [
-              TextScramble(
-                text: '3llips3s',
-                duration: const Duration(milliseconds: 1200),
-                style: monoStyle,
-                onComplete: _onScrambleComplete,
-              ),
+              _showFinalName
+                  ? TextScramble(
+                    key: const ValueKey('final'),
+                    text: '3llips3s',
+                    duration: const Duration(milliseconds: 1000),
+                    style: monoStyle,
+                    onComplete: _onScrambleComplete,
+                  )
+                  : TextScramble(
+                    key: const ValueKey('easter_egg'),
+                    text: 'G1ch1a_K',
+                    duration: const Duration(milliseconds: 1200),
+                    style: monoStyle,
+                    onComplete: () {
+                      // Pause briefly on the easter egg, then unscramble to the final public name
+                      Future.delayed(const Duration(milliseconds: 600), () {
+                        if (mounted) setState(() => _showFinalName = true);
+                      });
+                    },
+                  ),
               const SizedBox(width: 12),
               Text(_hereText, style: hereStyle),
             ],
@@ -264,7 +279,11 @@ class _HeroSectionState extends State<HeroSection> {
             ),
             const SizedBox(height: 4),
             // Pulsing arrow — continuous opacity 0.4 → 1.0
-            Icon(Icons.keyboard_arrow_down_rounded, size: 48, color: textColor)
+            Icon(
+                  Icons.keyboard_arrow_down_rounded,
+                  size: 48,
+                  color: AppColors.primaryLight,
+                )
                 .animate(
                   onPlay: (controller) => controller.repeat(reverse: true),
                 )

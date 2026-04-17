@@ -4,6 +4,7 @@ class ProjectInfo {
   final String? descriptionDe; // Optional German description (informal "Du" form)
   final String? descriptionEn; // Optional English translation
   final String screenshotPath;
+  final List<String>? galleryImages; // Optional additional screenshots for Lightbox View
   final String? webUrl; // null → no "Play" button
   final String? apkUrl; // null → no "Download" button
   final String repoName; // GitHub repo name for share links
@@ -13,6 +14,7 @@ class ProjectInfo {
     this.descriptionDe,
     this.descriptionEn,
     required this.screenshotPath,
+    this.galleryImages,
     this.webUrl,
     this.apkUrl,
     required this.repoName,
@@ -55,6 +57,10 @@ abstract final class ProjectData {
       descriptionEn:
           'Claim your X or O with the correct noun gender and beat your opponents in solo, pass-and-play, or online mode with a leaderboard.',
       screenshotPath: 'assets/screenshots/zwo.png',
+      galleryImages: [
+        'assets/screenshots/zwo_2.png',
+        'assets/screenshots/zwo_3.png',
+      ],
       webUrl: null, // APK Only
       apkUrl:
           'https://github.com/3llips3s/tic-tac-zwo/releases/latest/download/app-release.apk',

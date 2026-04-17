@@ -359,68 +359,136 @@ class ProjectCard extends StatelessWidget {
 
   // ── Lightbox Viewer ────────────────────────────────────────────────
   void _openLightbox(BuildContext context) {
+    final images = [project.screenshotPath, ...(project.galleryImages ?? [])];
+    final PageController pageController = PageController();
+    int currentIndex = 0;
+
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
       barrierLabel: 'Close Image Viewer',
-      barrierColor: Colors.black.withValues(alpha: 0.95), // Deep immersion
-      transitionDuration: const Duration(milliseconds: 400),
+      barrierColor: Colors.black.withValues(alpha: 0.9), // Deep immersion
+      transitionDuration: const Duration(milliseconds: 600),
       transitionBuilder: (context, animation, secondaryAnimation, child) {
         return FadeTransition(
-          opacity: CurvedAnimation(parent: animation, curve: Curves.easeOutCirc),
+          opacity: CurvedAnimation(parent: animation, curve: Curves.easeInOut),
           child: child,
         );
       },
       pageBuilder: (context, animation, secondaryAnimation) {
-        return SafeArea(
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              // Core Image View (Pan/Zoom capable)
-              Center(
-                child: InteractiveViewer(
-                  maxScale: 4.0,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 80),
-                    child: Hero(
-                      tag: project.screenshotPath,
-                      child: Image.asset(
-                        project.screenshotPath,
-                        fit: BoxFit.contain,
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return SafeArea(
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  // Core Image View Gallery
+                  Positioned.fill(
+                    child: PageView.builder(
+                      controller: pageController,
+                      physics: const BouncingScrollPhysics(),
+                      onPageChanged: (index) {
+                        setState(() => currentIndex = index);
+                      },
+                      itemCount: images.length,
+                      itemBuilder: (context, index) {
+                        final imagePath = images[index];
+                        Widget imageWidget = Image.asset(
+                          imagePath,
+                          fit: BoxFit.contain,
+                        );
+
+                        // Only the primary image triggers the Hero boundary flight
+                        if (index == 0) {
+                          imageWidget = Hero(
+                            tag: project.screenshotPath,
+                            child: imageWidget,
+                          );
+                        }
+
+                        return Center(
+                          child: InteractiveViewer(
+                            maxScale: 4.0,
+                            child: Padding(
+                              // Perfectly symmetrical bounds on all actionable sides
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 80,
+                                vertical: 80,
+                              ),
+                              child: imageWidget,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+
+                  // Faint Ghost Arrows for Gallery Navigation
+                  if (images.length > 1) ...[
+                    // Left Arrow
+                    if (currentIndex > 0)
+                      Positioned(
+                        left: 16,
+                        top: 0,
+                        bottom: 0,
+                        child: Center(
+                          child: IconButton(
+                            icon: const Icon(Icons.arrow_back_ios_rounded),
+                            iconSize: 28, // Matches Close button size
+                            color: AppColors.primaryLight,
+                            padding: const EdgeInsets.all(16), // Matches Close button hit-box
+                            onPressed: () {
+                              pageController.previousPage(
+                                duration: const Duration(milliseconds: 400),
+                                curve: Curves.easeOutCubic,
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    // Right Arrow
+                    if (currentIndex < images.length - 1)
+                      Positioned(
+                        right: 16,
+                        top: 0,
+                        bottom: 0,
+                        child: Center(
+                          child: IconButton(
+                            icon: const Icon(Icons.arrow_forward_ios_rounded),
+                            iconSize: 28, // Matches Close button size
+                            color: AppColors.primaryLight,
+                            padding: const EdgeInsets.all(16), // Matches Close button hit-box
+                            onPressed: () {
+                              pageController.nextPage(
+                                duration: const Duration(milliseconds: 400),
+                                curve: Curves.easeOutCubic,
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                  ],
+
+                  // Floating Dismiss Button aligned to bottom
+                  Positioned(
+                    bottom: 16,
+                    left: 0,
+                    right: 0,
+                    child: Center(
+                      child: IconButton(
+                        icon: const Icon(Icons.close_rounded),
+                        iconSize: 28, 
+                        color: AppColors.primaryLight,
+                        padding: const EdgeInsets.all(16),
+                        tooltip: 'Close Viewer',
+                        onPressed: () => Navigator.of(context).pop(),
                       ),
                     ),
                   ),
-                ),
+                ],
               ),
-              // Floating Dismiss Button aligned to bottom
-              Positioned(
-                bottom: 32,
-                left: 0,
-                right: 0,
-                child: Center(
-                  child: OutlinedButton.icon(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(Icons.close_rounded, size: 18),
-                    label: Text(
-                      'Close',
-                      style: GoogleFonts.inter(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: Colors.transparent, // Let barrier act as background
-                      side: const BorderSide(color: AppColors.darkDividerStrong),
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)), // Pill
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+            );
+          },
         );
       },
     );
