@@ -1,7 +1,9 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../config/app_colors.dart';
 import '../../config/project_data.dart';
+import '../../utils/local_storage_helper.dart';
 import '../../utils/share_helper.dart';
 import '../../utils/url_launcher_helper.dart';
 
@@ -34,7 +36,7 @@ class ProjectCard extends StatelessWidget {
 
     final textCol = Expanded(
       flex: isMobile ? 60 : 65,
-      child: _content(isDark, isMobile),
+      child: _content(context, isDark, isMobile),
     );
 
     return Container(
@@ -120,7 +122,7 @@ class ProjectCard extends StatelessWidget {
   }
 
   // ── Text content + actions ────────────────────────────────────────
-  Widget _content(bool isDark, bool isMobile) {
+  Widget _content(BuildContext context, bool isDark, bool isMobile) {
     final Color textPrimary =
         isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary;
 
@@ -177,13 +179,13 @@ class ProjectCard extends StatelessWidget {
         const SizedBox(height: 16),
 
         // ── Primary action buttons (Flush Bottom) ──
-        _primaryActions(isDark, isMobile),
+        _primaryActions(context, isDark, isMobile),
       ],
     );
   }
 
   // ── Primary: Download (left/top) / Play (right/bottom) ────────────
-  Widget _primaryActions(bool isDark, bool isMobile) {
+  Widget _primaryActions(BuildContext context, bool isDark, bool isMobile) {
     final bool hasPlay = project.webUrl != null;
     final bool hasDownload = project.apkUrl != null;
 
@@ -194,7 +196,7 @@ class ProjectCard extends StatelessWidget {
         _actionButton(
           label: 'Download',
           icon: Icons.android,
-          onPressed: () => UrlLauncherHelper.openUrl(project.apkUrl!),
+          onPressed: () => _handleApkDownload(context, project.apkUrl!, isDark),
           filled: false,
           isDark: isDark,
           isMobile: isMobile,
@@ -357,6 +359,165 @@ class ProjectCard extends StatelessWidget {
     );
   }
 
+  // ── APK Download Interceptor ───────────────────────────────────────
+  void _handleApkDownload(BuildContext context, String url, bool isDark) {
+    if (LocalStorageHelper.readBool('skip_apk_disclaimer')) {
+      UrlLauncherHelper.openUrl(url);
+      return;
+    }
+
+    bool dontShowAgain = false;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 8.0, sigmaY: 8.0),
+              child: AlertDialog(
+                backgroundColor:
+                    isDark ? AppColors.darkCard : AppColors.lightCard,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                titlePadding: const EdgeInsets.fromLTRB(24, 32, 24, 16),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+                actionsPadding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
+                title: Text(
+                  "Quick Heads Up",
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.jetBrainsMono(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color:
+                        isDark
+                            ? AppColors.darkTextPrimary
+                            : AppColors.lightTextPrimary,
+                    height: 1.4,
+                  ),
+                ),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Since you\'re installing this app outside Play Store, Android will prompt a standard safety check.\n\n'
+                      'When it pops up, tap “Download anyway” to get the app.\n\n'
+                      'The source code is public on GitHub, so you can see what\'s under the hood.',
+                      style: GoogleFonts.inter(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        color:
+                            isDark
+                                ? AppColors.darkTextSecondary
+                                : AppColors.lightTextSecondary,
+                        height: 1.6,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    MouseRegion(
+                      cursor: SystemMouseCursors.click,
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() => dontShowAgain = !dontShowAgain);
+                        },
+                        behavior: HitTestBehavior.opaque,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: Checkbox(
+                                value: dontShowAgain,
+                                onChanged: (val) {
+                                  if (val != null) {
+                                    setState(() => dontShowAgain = val);
+                                  }
+                                },
+                                activeColor: AppColors.primary,
+                                checkColor: Colors.white,
+                                side: BorderSide(
+                                  color:
+                                      isDark
+                                          ? AppColors.darkDividerStrong
+                                          : AppColors.lightDivider,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Text(
+                              "Don't show this again",
+                              style: GoogleFonts.inter(
+                                fontSize: 13,
+                                color:
+                                    isDark
+                                        ? AppColors.darkTextSecondary
+                                        : AppColors.lightTextSecondary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text(
+                      'no, thanks',
+                      style: GoogleFonts.inter(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color:
+                            isDark
+                                ? AppColors.darkTextSecondary
+                                : AppColors.lightTextSecondary,
+                      ),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      if (dontShowAgain) {
+                        LocalStorageHelper.writeBool(
+                          'skip_apk_disclaimer',
+                          true,
+                        );
+                      }
+                      Navigator.of(context).pop();
+                      UrlLauncherHelper.openUrl(url);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: Text(
+                      'sounds good',
+                      style: GoogleFonts.inter(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   // ── Lightbox Viewer ────────────────────────────────────────────────
   void _openLightbox(BuildContext context) {
     final images = [project.screenshotPath, ...(project.galleryImages ?? [])];
@@ -436,7 +597,9 @@ class ProjectCard extends StatelessWidget {
                             icon: const Icon(Icons.arrow_back_ios_rounded),
                             iconSize: 28, // Matches Close button size
                             color: AppColors.primaryLight,
-                            padding: const EdgeInsets.all(16), // Matches Close button hit-box
+                            padding: const EdgeInsets.all(
+                              16,
+                            ), // Matches Close button hit-box
                             onPressed: () {
                               pageController.previousPage(
                                 duration: const Duration(milliseconds: 400),
@@ -457,7 +620,9 @@ class ProjectCard extends StatelessWidget {
                             icon: const Icon(Icons.arrow_forward_ios_rounded),
                             iconSize: 28, // Matches Close button size
                             color: AppColors.primaryLight,
-                            padding: const EdgeInsets.all(16), // Matches Close button hit-box
+                            padding: const EdgeInsets.all(
+                              16,
+                            ), // Matches Close button hit-box
                             onPressed: () {
                               pageController.nextPage(
                                 duration: const Duration(milliseconds: 400),
@@ -477,7 +642,7 @@ class ProjectCard extends StatelessWidget {
                     child: Center(
                       child: IconButton(
                         icon: const Icon(Icons.close_rounded),
-                        iconSize: 28, 
+                        iconSize: 28,
                         color: AppColors.primaryLight,
                         padding: const EdgeInsets.all(16),
                         tooltip: 'Close Viewer',

@@ -1,10 +1,12 @@
 /// Data model and content manifest for the Project Registry.
 class ProjectInfo {
   final String name;
-  final String? descriptionDe; // Optional German description (informal "Du" form)
+  final String?
+  descriptionDe; // Optional German description (informal "Du" form)
   final String? descriptionEn; // Optional English translation
   final String screenshotPath;
-  final List<String>? galleryImages; // Optional additional screenshots for Lightbox View
+  final List<String>?
+  galleryImages; // Optional additional screenshots for Lightbox View
   final String? webUrl; // null → no "Play" button
   final String? apkUrl; // null → no "Download" button
   final String repoName; // GitHub repo name for share links
@@ -36,7 +38,7 @@ abstract final class ProjectData {
       screenshotPath: 'assets/screenshots/vogel.png',
       webUrl: 'https://studio10200.dev/artikel-vogel/',
       apkUrl:
-          'https://github.com/3llips3s/artikel-vogel/releases/latest/download/app-release.apk',
+          'https://github.com/3llips3s/artikel-vogel/releases/latest/download/artikel_vogel.apk',
       repoName: 'artikel-vogel',
     ),
     ProjectInfo(
@@ -47,7 +49,7 @@ abstract final class ProjectData {
       screenshotPath: 'assets/screenshots/hangmensch.png',
       webUrl: 'https://studio10200.dev/hangmensch/',
       apkUrl:
-          'https://github.com/3llips3s/hangmensch/releases/latest/download/app-release.apk',
+          'https://github.com/3llips3s/hangmensch/releases/latest/download/hangmensch.apk',
       repoName: 'hangmensch',
     ),
     ProjectInfo(
@@ -63,7 +65,7 @@ abstract final class ProjectData {
       ],
       webUrl: null, // APK Only
       apkUrl:
-          'https://github.com/3llips3s/tic-tac-zwo/releases/latest/download/app-release.apk',
+          'https://github.com/3llips3s/tic-tac-zwo/releases/latest/download/tic_tac_zwo.apk',
       repoName: 'tic-tac-zwo',
     ),
     ProjectInfo(
