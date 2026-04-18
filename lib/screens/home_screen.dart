@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../config/app_colors.dart';
 import '../widgets/hero/hero_section.dart';
 import '../widgets/registry/project_registry.dart';
+import '../widgets/engine_room/terminal_registry.dart';
 
 /// The single-page portfolio, assembled from section widgets.
 ///
@@ -55,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ProjectRegistry(key: _registryKey),
 
               // ── Engine Room (Phase 4) ──
-              _placeholder('ENGINE ROOM', height: 300),
+              const TerminalRegistry(),
 
               // ── Contact (Phase 4) ──
               _placeholder('CONTACT', height: 200),

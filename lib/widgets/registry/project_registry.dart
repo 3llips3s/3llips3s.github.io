@@ -16,9 +16,11 @@ class ProjectRegistry extends StatelessWidget {
     final bool isMobile = MediaQuery.sizeOf(context).width < 768;
 
     return Padding(
-      padding: EdgeInsets.symmetric(
-        vertical: 64,
-        horizontal: isMobile ? 0 : 24,
+      padding: EdgeInsets.only(
+        top: 120,
+        bottom: 80,
+        left: isMobile ? 0 : 24,
+        right: isMobile ? 0 : 24,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -30,7 +32,7 @@ class ProjectRegistry extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '[ PROJECTS ]',
+                  '[ P R O J E C T S ]',
                   style: GoogleFonts.jetBrainsMono(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,

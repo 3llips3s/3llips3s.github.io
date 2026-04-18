@@ -201,14 +201,14 @@ class _HeroSectionState extends State<HeroSection> {
                   ? TextScramble(
                     key: const ValueKey('final'),
                     text: '3llips3s',
-                    duration: const Duration(milliseconds: 1000),
+                    duration: const Duration(milliseconds: 1200),
                     style: monoStyle,
                     onComplete: _onScrambleComplete,
                   )
                   : TextScramble(
                     key: const ValueKey('easter_egg'),
                     text: 'G1ch1a_K',
-                    duration: const Duration(milliseconds: 1200),
+                    duration: const Duration(milliseconds: 900),
                     style: monoStyle,
                     onComplete: () {
                       // Pause briefly on the easter egg, then unscramble to the final public name

@@ -9,6 +9,7 @@ class TerminalTyping extends StatefulWidget {
     this.charDelay = const Duration(milliseconds: 45),
     this.style,
     this.cursorColor,
+    this.cursorChar = '▌',
     this.onComplete,
     this.autoStart = true,
   });
@@ -17,6 +18,7 @@ class TerminalTyping extends StatefulWidget {
   final Duration charDelay;
   final TextStyle? style;
   final Color? cursorColor;
+  final String cursorChar;
   final VoidCallback? onComplete;
   final bool autoStart;
 
@@ -89,7 +91,7 @@ class TerminalTypingState extends State<TerminalTyping>
             child: FadeTransition(
               opacity: _cursorBlink,
               child: Text(
-                '▌',
+                widget.cursorChar,
                 style: style.copyWith(
                   color: widget.cursorColor ??
                       Theme.of(context).colorScheme.primary,

@@ -381,7 +381,7 @@ class ProjectCard extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),
-                titlePadding: const EdgeInsets.fromLTRB(24, 32, 24, 16),
+                titlePadding: const EdgeInsets.fromLTRB(24, 32, 24, 24),
                 contentPadding: const EdgeInsets.symmetric(horizontal: 24),
                 actionsPadding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
                 title: Text(
@@ -401,18 +401,50 @@ class ProjectCard extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Since you\'re installing this app outside Play Store, Android will prompt a standard safety check.\n\n'
-                      'When it pops up, tap “Download anyway” to get the app.\n\n'
-                      'The source code is public on GitHub, so you can see what\'s under the hood.',
-                      style: GoogleFonts.inter(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        color:
-                            isDark
-                                ? AppColors.darkTextSecondary
-                                : AppColors.lightTextSecondary,
-                        height: 1.6,
+                    Text.rich(
+                      TextSpan(
+                        style: GoogleFonts.inter(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          color:
+                              isDark
+                                  ? AppColors.darkTextSecondary
+                                  : AppColors.lightTextSecondary,
+                          height: 1.6,
+                        ),
+                        children: [
+                          const TextSpan(
+                            text:
+                                'Since you\'re installing this app outside the Play Store, Android will show a safety warning.\n\nThat\'s expected. Tap "Keep" or “Download anyway” to continue.\n\nThe code is public on ',
+                          ),
+                          WidgetSpan(
+                            alignment: PlaceholderAlignment.baseline,
+                            baseline: TextBaseline.alphabetic,
+                            child: MouseRegion(
+                              cursor: SystemMouseCursors.click,
+                              child: GestureDetector(
+                                onTap:
+                                    () => UrlLauncherHelper.openUrl(
+                                      'https://github.com/${ProjectData.githubOrg}/${project.repoName}',
+                                    ),
+                                child: Text(
+                                  'GitHub',
+                                  style: GoogleFonts.inter(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    color: AppColors.primaryLight,
+                                    decoration: TextDecoration.underline,
+                                    decorationColor: AppColors.primaryLight,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const TextSpan(
+                            text:
+                                ', if you\'d like to see what\'s under the hood.',
+                          ),
+                        ],
                       ),
                     ),
                     const SizedBox(height: 24),
@@ -453,8 +485,12 @@ class ProjectCard extends StatelessWidget {
                                 fontSize: 13,
                                 color:
                                     isDark
-                                        ? AppColors.darkTextSecondary
-                                        : AppColors.lightTextSecondary,
+                                        ? AppColors.darkTextPrimary.withValues(
+                                          alpha: 0.3,
+                                        )
+                                        : AppColors.lightTextPrimary.withValues(
+                                          alpha: 0.4,
+                                        ),
                               ),
                             ),
                           ],
@@ -567,7 +603,11 @@ class ProjectCard extends StatelessWidget {
                           );
                         }
 
-                        return Center(
+                        return GestureDetector(
+                          onTap: () => Navigator.of(context).pop(),
+                          behavior:
+                              HitTestBehavior
+                                  .translucent, // Allow taps on empty space to pop
                           child: InteractiveViewer(
                             maxScale: 4.0,
                             child: Padding(
@@ -576,7 +616,13 @@ class ProjectCard extends StatelessWidget {
                                 horizontal: 80,
                                 vertical: 80,
                               ),
-                              child: imageWidget,
+                              child: Center(
+                                child: GestureDetector(
+                                  onTap:
+                                      () {}, // Traps taps exactly on the image so they don't pop
+                                  child: imageWidget,
+                                ),
+                              ),
                             ),
                           ),
                         );
