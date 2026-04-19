@@ -21,7 +21,9 @@ final List<QuadrantData> _registryData = [
 
 /// The Engine Room replacement. A zero-frame terminal system report.
 class TerminalRegistry extends StatefulWidget {
-  const TerminalRegistry({super.key});
+  final VoidCallback? onComplete;
+
+  const TerminalRegistry({super.key, this.onComplete});
 
   @override
   State<TerminalRegistry> createState() => _TerminalRegistryState();
@@ -75,6 +77,11 @@ class _TerminalRegistryState extends State<TerminalRegistry> {
         } else {
           // All quadrants complete
           _showCTA = true;
+          Future.delayed(const Duration(milliseconds: 2500), () {
+            if (mounted) {
+              widget.onComplete?.call();
+            }
+          });
         }
       });
     });
@@ -90,7 +97,7 @@ class _TerminalRegistryState extends State<TerminalRegistry> {
       child: Container(
         width: double.infinity,
         padding: EdgeInsets.only(
-          top: 120,
+          top: 80,
           bottom: 80,
           left: isMobile ? 32 : 64,
           right: isMobile ? 32 : 64,
@@ -101,7 +108,7 @@ class _TerminalRegistryState extends State<TerminalRegistry> {
           children: [
             // ── Header (Left Aligned) ──
             Text(
-              '[ S T A C K ]',
+              'S T A C K',
               style: GoogleFonts.jetBrainsMono(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
@@ -110,12 +117,12 @@ class _TerminalRegistryState extends State<TerminalRegistry> {
               ),
             ),
 
-            const SizedBox(height: 64),
+            const SizedBox(height: 80),
 
             // ── Grid Layout ──
             if (isMobile) _buildMobileLayout() else _buildDesktopLayout(),
 
-            const SizedBox(height: 40),
+            const SizedBox(height: 16),
 
             // ── GitHub CTA Finish ──
             Center(child: TerminalCTA(visible: _showCTA)),

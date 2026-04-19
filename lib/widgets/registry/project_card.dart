@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:wiredash/wiredash.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../config/app_colors.dart';
 import '../../config/project_data.dart';
@@ -267,7 +268,14 @@ class ProjectCard extends StatelessWidget {
           icon: Icons.feedback_outlined,
           tooltip: 'Feedback',
           color: mutedColor,
-          onPressed: () {},
+          onPressed: () {
+            // Buffer the Wiredash freeze so the tap ripple actually has time to render!
+            Future.delayed(const Duration(milliseconds: 200), () {
+              if (context.mounted) {
+                Wiredash.of(context).show(inheritMaterialTheme: true);
+              }
+            });
+          },
         ),
       ],
     );
@@ -351,11 +359,22 @@ class ProjectCard extends StatelessWidget {
     required Color color,
     required VoidCallback onPressed,
   }) {
-    return IconButton(
-      onPressed: onPressed,
-      icon: Icon(icon, size: 22, color: color),
-      tooltip: tooltip,
-      splashRadius: 20,
+    return Material(
+      color: Colors.transparent,
+      child: Tooltip(
+        message: tooltip,
+        child: InkWell(
+          onTap: onPressed,
+          borderRadius: BorderRadius.circular(24),
+          hoverColor: AppColors.primary.withValues(alpha: 0.1),
+          splashColor: AppColors.primary.withValues(alpha: 0.3),
+          highlightColor: AppColors.primary.withValues(alpha: 0.1),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Icon(icon, size: 22, color: color),
+          ),
+        ),
+      ),
     );
   }
 

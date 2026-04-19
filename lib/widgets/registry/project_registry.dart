@@ -32,7 +32,7 @@ class ProjectRegistry extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '[ P R O J E C T S ]',
+                  'P R O J E C T S',
                   style: GoogleFonts.jetBrainsMono(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
