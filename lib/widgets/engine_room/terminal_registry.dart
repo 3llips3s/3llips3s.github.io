@@ -68,7 +68,7 @@ class _TerminalRegistryState extends State<TerminalRegistry> {
     });
 
     // Hold the bloom for a short beat, then dim and move to next
-    Future.delayed(const Duration(milliseconds: 1200), () {
+    Future.delayed(const Duration(milliseconds: 1500), () {
       if (!mounted) return;
       setState(() {
         _quadrantStates[index] = QuadrantState.settled;
@@ -77,7 +77,8 @@ class _TerminalRegistryState extends State<TerminalRegistry> {
         } else {
           // All quadrants complete
           _showCTA = true;
-          Future.delayed(const Duration(milliseconds: 2500), () {
+          // 2.2s (Overlap CTA duration) + 1.0s (resting state) = 3.2s
+          Future.delayed(const Duration(milliseconds: 3200), () {
             if (mounted) {
               widget.onComplete?.call();
             }
@@ -112,7 +113,7 @@ class _TerminalRegistryState extends State<TerminalRegistry> {
               style: GoogleFonts.jetBrainsMono(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
-                color: AppColors.primary.withValues(alpha: 0.6),
+                color: AppColors.primary,
                 letterSpacing: 2,
               ),
             ),

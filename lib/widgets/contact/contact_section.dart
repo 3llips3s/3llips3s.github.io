@@ -24,7 +24,7 @@ class _ContactSectionState extends State<ContactSection> {
   bool _isVisible = false;
   bool _hasFiredComplete = false;
 
-  final String _contactText = "Have an idea? Let's build it :)";
+  final String _contactText = "Do you have an idea? Let's build it :)";
   final String _emailAddress = 'contact@studio10200.dev';
 
   @override
@@ -40,7 +40,7 @@ class _ContactSectionState extends State<ContactSection> {
     // Fire the completion callback once after the full animation sequence
     if (shouldAnimate && !_hasFiredComplete) {
       _hasFiredComplete = true;
-      // Total: words(7) × 200ms stagger + 800ms breathing + 1000ms button slide
+      // Total: words(9) × 200ms stagger + 800ms breathing + 1000ms button slide
       // Added +1000ms extra delay for breathing room before the footer arrow fades in.
       final totalMs = words.length * 200 + 800 + 1000 + 1000;
       Future.delayed(Duration(milliseconds: totalMs), () {
@@ -74,7 +74,7 @@ class _ContactSectionState extends State<ContactSection> {
               style: GoogleFonts.jetBrainsMono(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
-                color: AppColors.primary.withValues(alpha: 0.6),
+                color: AppColors.primary,
                 letterSpacing: 2,
               ),
             ),

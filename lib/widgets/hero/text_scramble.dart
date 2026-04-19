@@ -32,7 +32,7 @@ class TextScramble extends StatefulWidget {
 
 class TextScrambleState extends State<TextScramble> {
   static const String _chars =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789aceminorsuvwxz!@#\$%^&*-_+=<>';
 
   final Random _random = Random();
   late String _displayed;

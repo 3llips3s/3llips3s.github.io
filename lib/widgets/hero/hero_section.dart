@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../config/app_colors.dart';
 import 'model_viewer_widget.dart';
 import 'text_scramble.dart';
+import 'transition_scramble.dart';
 import 'terminal_typing.dart';
 
 /// Full-viewport hero section with 3D model and animated intro sequence.
@@ -198,20 +199,22 @@ class _HeroSectionState extends State<HeroSection> {
             textBaseline: TextBaseline.alphabetic,
             children: [
               _showFinalName
-                  ? TextScramble(
-                    key: const ValueKey('final'),
-                    text: '3llips3s',
-                    duration: const Duration(milliseconds: 1200),
-                    style: monoStyle,
+                  ? TransitionScramble(
+                    key: const ValueKey('final_transition'),
+                    initialText: 'G1ch1a_K',
+                    finalText: '3llips3s',
+                    initialStyle: monoStyle,
+                    finalStyle: monoStyle.copyWith(color: AppColors.primary),
+                    duration: const Duration(milliseconds: 1800),
                     onComplete: _onScrambleComplete,
                   )
                   : TextScramble(
                     key: const ValueKey('easter_egg'),
                     text: 'G1ch1a_K',
-                    duration: const Duration(milliseconds: 900),
+                    duration: const Duration(milliseconds: 600),
                     style: monoStyle,
                     onComplete: () {
-                      // Pause briefly on the easter egg, then unscramble to the final public name
+                      // Pause briefly on the easter egg, then sweep to the final public name
                       Future.delayed(const Duration(milliseconds: 600), () {
                         if (mounted) setState(() => _showFinalName = true);
                       });

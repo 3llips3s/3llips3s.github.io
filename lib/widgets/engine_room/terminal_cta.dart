@@ -52,7 +52,7 @@ class _TerminalCTAState extends State<TerminalCTA> {
 
     return AnimatedOpacity(
       opacity: widget.visible ? 1.0 : 0.0,
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 200),
       child: IgnorePointer(
         ignoring: !widget.visible,
         child: MouseRegion(
@@ -102,11 +102,11 @@ class _TerminalCTAState extends State<TerminalCTA> {
                     .moveY(
                       begin: 16,
                       end: 0,
-                      duration: 1000.ms,
+                      duration: 1200.ms,
                       delay: 400.ms,
                       curve: Curves.easeOutCubic,
                     )
-                    .fadeIn(duration: 1000.ms, delay: 400.ms),
+                    .fadeIn(duration: 1200.ms, delay: 400.ms),
 
                 const SizedBox(height: 4),
 
@@ -123,11 +123,11 @@ class _TerminalCTAState extends State<TerminalCTA> {
                     .moveX(
                       begin: -118,
                       end: 0,
-                      duration: 1000.ms,
-                      delay: 1400.ms,
+                      duration: 1200.ms,
+                      delay: 1000.ms,
                       curve: Curves.easeOutCubic,
                     )
-                    .fadeIn(duration: 1000.ms, delay: 1400.ms),
+                    .fadeIn(duration: 1200.ms, delay: 1000.ms),
               ],
             ),
           ),
