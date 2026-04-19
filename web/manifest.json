@@ -5,7 +5,7 @@
     "display": "standalone",
     "background_color": "#000000",
     "theme_color": "#000000",
-    "description": "A new Flutter project.",
+    "description": "Administrative engine and portfolio mothership of Studio 10200.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

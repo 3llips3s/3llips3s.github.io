@@ -22,6 +22,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.1
 
 flutter:
   uses-material-design: true
@@ -31,3 +32,13 @@ flutter:
     - assets/images/
     - assets/screenshots/
     - assets/icons/
+
+flutter_launcher_icons:
+  image_path: "assets/icons/studio10200_icon_full.png"
+  android: false
+  ios: false
+  web:
+    generate: true
+    image_path: "assets/icons/studio10200_icon_full.png"
+    background_color: "#000000"
+    theme_color: "#000000"
