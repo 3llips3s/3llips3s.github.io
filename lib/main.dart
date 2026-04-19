@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:web/web.dart' as web;
+import 'package:google_fonts/google_fonts.dart';
 import 'config/env_config.dart';
 import 'services/analytics_service.dart';
 import 'app.dart';
@@ -37,6 +38,13 @@ void main() async {
     name: 'session_start',
     interactionType: 'page_load',
   );
+
+  // Pre-load essential font weights to prevent FOUC (Flash of Unstyled Content)
+  GoogleFonts.jetBrainsMono(); // 400
+  GoogleFonts.jetBrainsMono(fontWeight: FontWeight.w600); // used in project/dialog headers
+  GoogleFonts.inter(); // 400
+  GoogleFonts.inter(fontWeight: FontWeight.w600); // used in primary buttons
+  await GoogleFonts.pendingFonts();
 
   runApp(const StudioApp());
 }

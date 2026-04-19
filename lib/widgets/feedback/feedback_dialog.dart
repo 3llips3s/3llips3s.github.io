@@ -99,10 +99,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
     final double screenWidth = MediaQuery.sizeOf(context).width;
     final double dialogWidth =
-        screenWidth < 768
-            ? screenWidth -
-                80 // Matches native AlertDialog horizontal inset padding precisely
-            : 400; // Narrower max width
+        screenWidth < 768 ? screenWidth - 48 : 400; // Narrower max width
 
     // ── Radiant color palette ──────────────────────────────────────
     final Color dialogBg =
@@ -130,7 +127,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
         color: Colors.transparent,
         child: Container(
           width: dialogWidth,
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 32),
+          padding: const EdgeInsets.all(32),
           decoration: BoxDecoration(
             color: dialogBg,
             borderRadius: BorderRadius.circular(16),
@@ -168,35 +165,40 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
   // ── Success State ──────────────────────────────────────────────────
 
   Widget _buildSuccessState(Color textColor) {
-    return Column(
-      key: const ValueKey('success'),
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        const SizedBox(height: 16),
-        Icon(
-              Icons.check_circle_rounded,
-              size: 48,
-              color: AppColors.primaryLight,
-            )
-            .animate()
-            .fadeIn(duration: 400.ms)
-            .scale(
-              begin: const Offset(0.6, 0.6),
-              end: const Offset(1, 1),
-              duration: 400.ms,
-              curve: Curves.easeOutBack,
-            ),
-        const SizedBox(height: 16),
-        Text(
-          'thank you',
-          style: GoogleFonts.inter(
-            fontSize: 18,
-            fontWeight: FontWeight.w500,
-            color: textColor.withValues(alpha: 0.8),
-          ),
-        ).animate().fadeIn(duration: 400.ms, delay: 100.ms),
-        const SizedBox(height: 16),
-      ],
+    return SizedBox(
+      height: 360, // Mirrors the approximate height of the form layout
+      child: Center(
+        child: Column(
+          key: const ValueKey('success'),
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 16),
+            Icon(
+                  Icons.check_circle_rounded,
+                  size: 48,
+                  color: AppColors.primaryLight,
+                )
+                .animate()
+                .fadeIn(duration: 400.ms)
+                .scale(
+                  begin: const Offset(0.6, 0.6),
+                  end: const Offset(1, 1),
+                  duration: 400.ms,
+                  curve: Curves.easeOutBack,
+                ),
+            const SizedBox(height: 16),
+            Text(
+              'thank you',
+              style: GoogleFonts.inter(
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+                color: textColor.withValues(alpha: 0.8),
+              ),
+            ).animate().fadeIn(duration: 400.ms, delay: 100.ms),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
     );
   }
 
@@ -266,7 +268,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
           ),
         ),
 
-        const SizedBox(height: 12),
+        const SizedBox(height: 16),
 
         // ── Email Field (optional) ──
         TextField(
