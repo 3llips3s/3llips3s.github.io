@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../config/app_colors.dart';
+import '../../services/analytics_service.dart';
 
 class TerminalCTA extends StatefulWidget {
   final bool visible;
@@ -17,6 +18,10 @@ class _TerminalCTAState extends State<TerminalCTA> {
   bool _isHovered = false;
 
   Future<void> _launchGitHub() async {
+    AnalyticsService.instance.logEvent(
+      name: 'external_intent',
+      interactionType: 'github_view',
+    );
     final Uri url = Uri.parse('https://github.com/3llips3s');
     if (!await launchUrl(url)) {
       debugPrint('Could not launch \$url');

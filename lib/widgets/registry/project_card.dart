@@ -1,12 +1,13 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:wiredash/wiredash.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../config/app_colors.dart';
 import '../../config/project_data.dart';
+import '../../services/analytics_service.dart';
 import '../../utils/local_storage_helper.dart';
 import '../../utils/share_helper.dart';
 import '../../utils/url_launcher_helper.dart';
+import '../feedback/feedback_dialog.dart';
 
 /// Side-by-side project card for portrait screenshots.
 ///
@@ -210,7 +211,14 @@ class ProjectCard extends StatelessWidget {
         _actionButton(
           label: 'Play',
           icon: Icons.play_arrow_rounded,
-          onPressed: () => UrlLauncherHelper.openUrl(project.webUrl!),
+          onPressed: () {
+            AnalyticsService.instance.logEvent(
+              name: 'app_launch',
+              projectName: project.name,
+              interactionType: 'web_play',
+            );
+            UrlLauncherHelper.openUrl(project.webUrl!);
+          },
           filled: true,
           isDark: isDark,
           isMobile: isMobile,
@@ -253,15 +261,21 @@ class ProjectCard extends StatelessWidget {
           icon: Icons.share_rounded,
           tooltip: 'Share',
           color: mutedColor,
-          onPressed:
-              () => ShareHelper.share(
-                context, // Pass context for the fallback snackbar
-                title: project.name,
-                text: '${project.name} — ${project.descriptionEn}',
-                url:
-                    project.webUrl ??
-                    'https://github.com/${ProjectData.githubOrg}/${project.repoName}',
-              ),
+          onPressed: () {
+            AnalyticsService.instance.logEvent(
+              name: 'engagement',
+              projectName: project.name,
+              interactionType: 'share_click',
+            );
+            ShareHelper.share(
+              context,
+              title: project.name,
+              text: '${project.name} — ${project.descriptionEn}',
+              url:
+                  project.webUrl ??
+                  'https://github.com/${ProjectData.githubOrg}/${project.repoName}',
+            );
+          },
         ),
         const SizedBox(width: 8),
         _iconButton(
@@ -269,12 +283,12 @@ class ProjectCard extends StatelessWidget {
           tooltip: 'Feedback',
           color: mutedColor,
           onPressed: () {
-            // Buffer the Wiredash freeze so the tap ripple actually has time to render!
-            Future.delayed(const Duration(milliseconds: 200), () {
-              if (context.mounted) {
-                Wiredash.of(context).show(inheritMaterialTheme: true);
-              }
-            });
+            AnalyticsService.instance.logEvent(
+              name: 'engagement',
+              projectName: project.name,
+              interactionType: 'feedback_open',
+            );
+            FeedbackDialog.show(context, projectName: project.name);
           },
         ),
       ],
@@ -381,6 +395,11 @@ class ProjectCard extends StatelessWidget {
   // ── APK Download Interceptor ───────────────────────────────────────
   void _handleApkDownload(BuildContext context, String url, bool isDark) {
     if (LocalStorageHelper.readBool('skip_apk_disclaimer')) {
+      AnalyticsService.instance.logEvent(
+        name: 'app_launch',
+        projectName: project.name,
+        interactionType: 'apk_download',
+      );
       UrlLauncherHelper.openUrl(url);
       return;
     }
@@ -542,6 +561,11 @@ class ProjectCard extends StatelessWidget {
                         );
                       }
                       Navigator.of(context).pop();
+                      AnalyticsService.instance.logEvent(
+                        name: 'app_launch',
+                        projectName: project.name,
+                        interactionType: 'apk_download',
+                      );
                       UrlLauncherHelper.openUrl(url);
                     },
                     style: ElevatedButton.styleFrom(

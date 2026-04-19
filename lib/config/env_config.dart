@@ -7,13 +7,9 @@ abstract final class EnvConfig {
     await dotenv.load(fileName: '.env');
   }
 
-  static String get wiredashProjectId =>
-      dotenv.env['WIREDASH_PROJECT_ID'] ?? '';
+  static String get supabaseUrl =>
+      dotenv.env['SUPABASE_URL'] ?? '';
 
-  static String get wiredashSecret =>
-      dotenv.env['WIREDASH_SECRET'] ?? '';
-
-  /// Returns `true` if both Wiredash credentials are present.
-  static bool get isWiredashConfigured =>
-      wiredashProjectId.isNotEmpty && wiredashSecret.isNotEmpty;
+  static String get supabaseAnonKey =>
+      dotenv.env['SUPABASE_ANON_KEY'] ?? '';
 }

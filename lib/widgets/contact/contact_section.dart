@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import '../../config/app_colors.dart';
+import '../../services/analytics_service.dart';
 import '../../utils/url_launcher_helper.dart';
 
 class ContactSection extends StatefulWidget {
@@ -136,10 +137,15 @@ class _ContactSectionState extends State<ContactSection> {
 
                           // Primary Action: Email
                           ElevatedButton(
-                            onPressed:
-                                () => UrlLauncherHelper.openUrl(
-                                  'mailto:$_emailAddress',
-                                ),
+                            onPressed: () {
+                              AnalyticsService.instance.logEvent(
+                                name: 'external_intent',
+                                interactionType: 'email_start',
+                              );
+                              UrlLauncherHelper.openUrl(
+                                'mailto:$_emailAddress',
+                              );
+                            },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.primary,
                               foregroundColor:
