@@ -12,13 +12,21 @@ class ModelViewerWidget extends StatefulWidget {
   const ModelViewerWidget({super.key});
 
   /// Trigger the CSS fade-in + scale-up animation.
+  /// Includes a small retry delay to ensure the platform view has 
+  /// been mounted into the DOM by the browser.
   static void reveal() {
-    final el = web.document.getElementById('studio-model-viewer')
-        as web.HTMLElement?;
-    if (el != null) {
-      el.style.setProperty('opacity', '1');
-      el.style.setProperty('transform', 'scale(1)');
+    void attempt() {
+      final el = web.document.getElementById('studio-model-viewer')
+          as web.HTMLElement?;
+      if (el != null) {
+        el.style.setProperty('opacity', '1');
+        el.style.setProperty('transform', 'scale(1)');
+      } else {
+        // If not found (DOM latency), try one more time in 100ms
+        Future.delayed(const Duration(milliseconds: 100), attempt);
+      }
     }
+    attempt();
   }
 
   @override
@@ -49,7 +57,9 @@ class _ModelViewerWidgetState extends State<ModelViewerWidget> {
         element.id = 'studio-model-viewer';
 
         // ── Model source ────────────────────────────────────────
-        element.setAttribute('src', 'assets/3d/hoops.glb');
+        // In Flutter Web production builds, assets are located at assets/assets/...
+        element.setAttribute('src', 'assets/assets/3d/hoops.glb');
+        element.setAttribute('poster', 'assets/assets/images/hoops_poster.webp');
 
         // ── Orientation — rotate 90° on X-axis so hoops sit upright ──
         element.setAttribute('orientation', '90deg 0deg 0deg');
