@@ -1,10 +1,14 @@
-# Studio 10200 — Mothership
+# Studio 10200
 
-![Studio 10200 Icon](assets/icons/studio10200_icon_full.png)
+<p align="center">
+  <img src="assets/icons/studio10200_icon_full.png" alt="Studio 10200 Logo" width="160">
+</p>
 
-### Administrative Engine & Portfolio | Built by 3llips3s
 
-Welcome to the **Mothership**. This repo houses the central hub for Studio 10200, serving as both a professional portfolio and the orchestrator for various gaming and utility sub-projects.
+
+### Workshop
+
+Welcome to **The Mothership**. This repo houses the central hub for Studio 10200, serving as both a professional portfolio and the orchestrator for various gaming and utility sub-projects.
 
 
 ## Key Features
