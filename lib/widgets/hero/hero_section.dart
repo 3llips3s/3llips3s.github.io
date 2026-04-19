@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../config/app_colors.dart';
+import '../../config/project_data.dart';
 import 'model_viewer_widget.dart';
 import 'text_scramble.dart';
 import 'transition_scramble.dart';
@@ -34,6 +35,32 @@ class _HeroSectionState extends State<HeroSection> {
 
   final GlobalKey<TerminalTypingState> _typingKey = GlobalKey();
   Timer? _hereTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _precacheAssets();
+  }
+
+  /// Pre-cache all project screenshots and the 3D model poster.
+  /// This ensures they load instantly when the user scrolls down.
+  void _precacheAssets() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // 1. Pre-cache 3D poster
+      precacheImage(const AssetImage('assets/images/hoops_poster.webp'), context);
+
+      // 2. Pre-cache all project screenshots
+      for (final project in ProjectData.projects) {
+        precacheImage(AssetImage(project.screenshotPath), context);
+        // Also precache gallery images if they exist
+        if (project.galleryImages != null) {
+          for (final img in project.galleryImages!) {
+            precacheImage(AssetImage(img), context);
+          }
+        }
+      }
+    });
+  }
 
   // ── Sequence callbacks ─────────────────────────────────────────
 

@@ -82,12 +82,17 @@ abstract final class AppTheme {
 
   static ScrollbarThemeData _scrollbarTheme(Brightness brightness) {
     return ScrollbarThemeData(
-      thumbColor: WidgetStateProperty.all(
-        AppColors.primary.withValues(alpha: 0.6),
-      ),
-      thickness: WidgetStateProperty.all(4.0),
-      radius: const Radius.circular(2),
+      thumbColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.hovered) ||
+            states.contains(WidgetState.dragged)) {
+          return AppColors.primary;
+        }
+        return AppColors.primary.withValues(alpha: 0.8);
+      }),
+      thickness: WidgetStateProperty.all(3.0),
+      radius: const Radius.circular(8),
       thumbVisibility: WidgetStateProperty.all(false),
+      interactive: true,
     );
   }
 }
