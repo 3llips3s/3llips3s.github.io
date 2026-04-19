@@ -1,14 +1,12 @@
 # Studio 10200
 
 <p align="center">
-  <img src="assets/icons/studio10200_icon_full.png" alt="Studio 10200 Logo" width="160">
+  <img src="assets/icons/studio10200_icon_full.png" alt="Studio 10200 Logo" width="320">
 </p>
-
-
 
 ### Workshop
 
-Welcome to **The Mothership**. This repo houses the central hub for Studio 10200, serving as both a professional portfolio and the orchestrator for various gaming and utility sub-projects.
+Welcome to **The Mothership**. This repo houses the central hub for Studio 10200, serving as both a portfolio and the orchestrator for various gaming and utility sub-projects.
 
 
 ## Key Features
