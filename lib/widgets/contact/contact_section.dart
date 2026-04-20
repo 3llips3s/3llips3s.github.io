@@ -109,8 +109,8 @@ class _ContactSectionState extends State<ContactSection> {
                         .fadeIn(
                           duration: 800.ms, // Slowed down
                           delay: Duration(
-                            milliseconds: (index * 200) + (index > 4 ? 600 : 0),
-                          ), // Larger stagger + 600ms pause after "idea?"
+                            milliseconds: (index * 200) + (index > 4 ? 1200 : 0),
+                          ), // Larger stagger + 1200ms pause after "idea?"
                           curve: Curves.easeOut,
                         )
                         .moveX(
@@ -118,7 +118,7 @@ class _ContactSectionState extends State<ContactSection> {
                           end: 0,
                           duration: 800.ms,
                           delay: Duration(
-                            milliseconds: (index * 200) + (index > 4 ? 600 : 0),
+                            milliseconds: (index * 200) + (index > 4 ? 1200 : 0),
                           ),
                         );
                   }),

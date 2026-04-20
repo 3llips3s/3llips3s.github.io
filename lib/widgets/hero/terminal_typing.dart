@@ -33,6 +33,7 @@ class TerminalTypingState extends State<TerminalTyping>
   late AnimationController _cursorBlink;
   bool _isComplete = false;
   bool _isStarted = false;
+  bool _hideCursor = false;
 
   @override
   void initState() {
@@ -70,6 +71,7 @@ class TerminalTypingState extends State<TerminalTyping>
   void stopBlinking() {
     _cursorBlink.stop();
     setState(() {
+      _hideCursor = true;
       _isComplete = true; // Ensure logic treats it as finished
     });
   }
@@ -92,21 +94,22 @@ class TerminalTypingState extends State<TerminalTyping>
       TextSpan(
         children: [
           TextSpan(text: displayed, style: style),
-          // Blinking cursor
-          WidgetSpan(
-            alignment: PlaceholderAlignment.baseline,
-            baseline: TextBaseline.alphabetic,
-            child: FadeTransition(
-              opacity: _cursorBlink,
-              child: Text(
-                widget.cursorChar,
-                style: style.copyWith(
-                  color: widget.cursorColor ??
-                      Theme.of(context).colorScheme.primary,
+          // Blinking cursor (hidden if stopBlinking called)
+          if (!_hideCursor)
+            WidgetSpan(
+              alignment: PlaceholderAlignment.baseline,
+              baseline: TextBaseline.alphabetic,
+              child: FadeTransition(
+                opacity: _cursorBlink,
+                child: Text(
+                  widget.cursorChar,
+                  style: style.copyWith(
+                    color: widget.cursorColor ??
+                        Theme.of(context).colorScheme.primary,
+                  ),
                 ),
               ),
             ),
-          ),
         ],
       ),
     );
