@@ -41,9 +41,9 @@ class _ContactSectionState extends State<ContactSection> {
     // Fire the completion callback once after the full animation sequence
     if (shouldAnimate && !_hasFiredComplete) {
       _hasFiredComplete = true;
-      // Total: words(9) × 200ms stagger + 800ms breathing + 1000ms button slide
+      // Total: words(9) × 200ms stagger + 1200ms pause + 800ms breathing + 1000ms button slide
       // Added +1000ms extra delay for breathing room before the footer arrow fades in.
-      final totalMs = words.length * 200 + 800 + 1000 + 1000;
+      final totalMs = words.length * 200 + 1200 + 800 + 1000 + 1000;
       Future.delayed(Duration(milliseconds: totalMs), () {
         widget.onAnimationComplete?.call();
       });
@@ -284,12 +284,14 @@ class _ContactSectionState extends State<ContactSection> {
                         begin: 40,
                         end: 0,
                         duration: 1000.ms,
-                        delay: Duration(milliseconds: words.length * 200 + 800),
+                        delay:
+                            Duration(milliseconds: words.length * 200 + 1200 + 800),
                         curve: Curves.easeOutCubic,
                       )
                       .fadeIn(
                         duration: 1000.ms,
-                        delay: Duration(milliseconds: words.length * 200 + 800),
+                        delay:
+                            Duration(milliseconds: words.length * 200 + 1200 + 800),
                       ),
                 ),
               ],

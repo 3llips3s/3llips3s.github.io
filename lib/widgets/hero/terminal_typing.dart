@@ -94,11 +94,12 @@ class TerminalTypingState extends State<TerminalTyping>
       TextSpan(
         children: [
           TextSpan(text: displayed, style: style),
-          // Blinking cursor (hidden if stopBlinking called)
-          if (!_hideCursor)
-            WidgetSpan(
-              alignment: PlaceholderAlignment.baseline,
-              baseline: TextBaseline.alphabetic,
+          // Blinking cursor (invisible but maintains space if stopBlinking called)
+          WidgetSpan(
+            alignment: PlaceholderAlignment.baseline,
+            baseline: TextBaseline.alphabetic,
+            child: Opacity(
+              opacity: _hideCursor ? 0.0 : 1.0,
               child: FadeTransition(
                 opacity: _cursorBlink,
                 child: Text(
@@ -110,6 +111,7 @@ class TerminalTypingState extends State<TerminalTyping>
                 ),
               ),
             ),
+          ),
         ],
       ),
     );
