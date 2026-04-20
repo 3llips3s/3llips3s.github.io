@@ -109,15 +109,17 @@ class _ContactSectionState extends State<ContactSection> {
                         .fadeIn(
                           duration: 800.ms, // Slowed down
                           delay: Duration(
-                            milliseconds: index * 200,
-                          ), // Larger stagger
+                            milliseconds: (index * 200) + (index > 4 ? 600 : 0),
+                          ), // Larger stagger + 600ms pause after "idea?"
                           curve: Curves.easeOut,
                         )
                         .moveX(
                           begin: -20,
                           end: 0,
                           duration: 800.ms,
-                          delay: Duration(milliseconds: index * 200),
+                          delay: Duration(
+                            milliseconds: (index * 200) + (index > 4 ? 600 : 0),
+                          ),
                         );
                   }),
                 ),

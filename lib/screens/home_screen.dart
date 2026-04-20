@@ -117,10 +117,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                       (controller) =>
                                           controller.repeat(reverse: true),
                                 )
+                                .moveY(
+                                  begin: 0,
+                                  end: -60,
+                                  duration: 1500.ms,
+                                  curve: Curves.easeInOut,
+                                )
                                 .fade(
-                                  begin: 0.4,
+                                  begin: 0.0,
                                   end: 1.0,
-                                  duration: 1200.ms,
+                                  duration: 1500.ms,
                                   curve: Curves.easeInOut,
                                 ),
                           ),

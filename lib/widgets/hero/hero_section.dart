@@ -104,6 +104,13 @@ class _HeroSectionState extends State<HeroSection> {
       setState(() => _showFinale = true);
       // Trigger the CSS-based fade + scale on the model-viewer element.
       ModelViewerWidget.reveal();
+
+      // Stop cursor blinking after assets have settled (approx 2s entrance)
+      Future.delayed(const Duration(milliseconds: 2500), () {
+        if (mounted) {
+          _typingKey.currentState?.stopBlinking();
+        }
+      });
     });
   }
 

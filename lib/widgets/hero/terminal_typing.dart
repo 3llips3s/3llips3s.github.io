@@ -66,6 +66,14 @@ class TerminalTypingState extends State<TerminalTyping>
     });
   }
 
+  /// Stops the cursor blinking and hides it.
+  void stopBlinking() {
+    _cursorBlink.stop();
+    setState(() {
+      _isComplete = true; // Ensure logic treats it as finished
+    });
+  }
+
   @override
   void dispose() {
     _typingTimer?.cancel();
