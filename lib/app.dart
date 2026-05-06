@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'config/app_theme.dart';
 import 'screens/home_screen.dart';
+import 'widgets/shader_warmup.dart';
 
 /// Root widget — owns the theme mode state.
 class StudioApp extends StatefulWidget {
@@ -15,6 +16,8 @@ class StudioApp extends StatefulWidget {
 }
 
 class _StudioAppState extends State<StudioApp> {
+  bool _isWarmedUp = false;
+
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<ThemeMode>(
@@ -26,7 +29,18 @@ class _StudioAppState extends State<StudioApp> {
           theme: AppTheme.light,
           darkTheme: AppTheme.dark,
           themeMode: themeMode,
-          home: const HomeScreen(),
+          home: _isWarmedUp
+              ? const HomeScreen()
+              : Scaffold(
+                  backgroundColor: Colors.transparent,
+                  body: AppShaderWarmup(
+                    onWarmupComplete: () {
+                      if (mounted) {
+                        setState(() => _isWarmedUp = true);
+                      }
+                    },
+                  ),
+                ),
         );
       },
     );

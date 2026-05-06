@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../config/app_colors.dart';
 import '../../config/project_data.dart';
 import 'model_viewer_widget.dart';
@@ -42,24 +41,26 @@ class _HeroSectionState extends State<HeroSection> {
     _precacheAssets();
   }
 
-  /// Pre-cache all project screenshots and the 3D model poster.
-  /// This ensures they load instantly when the user scrolls down.
+  /// Pre-cache 3D model poster for instant load.
   void _precacheAssets() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // 1. Pre-cache 3D poster
-      precacheImage(const AssetImage('assets/images/hoops_poster.webp'), context);
+      precacheImage(
+        const AssetImage('assets/images/hoops_poster.webp'),
+        context,
+      );
+    });
+  }
 
-      // 2. Pre-cache all project screenshots
-      for (final project in ProjectData.projects) {
-        precacheImage(AssetImage(project.screenshotPath), context);
-        // Also precache gallery images if they exist
-        if (project.galleryImages != null) {
-          for (final img in project.galleryImages!) {
-            precacheImage(AssetImage(img), context);
-          }
+  /// Heavy image precaching deferred to avoid jank during entrance animations.
+  void _precacheProjectAssets() {
+    for (final project in ProjectData.projects) {
+      precacheImage(AssetImage(project.screenshotPath), context);
+      if (project.galleryImages != null) {
+        for (final img in project.galleryImages!) {
+          precacheImage(AssetImage(img), context);
         }
       }
-    });
+    }
   }
 
   // ── Sequence callbacks ─────────────────────────────────────────
@@ -109,6 +110,8 @@ class _HeroSectionState extends State<HeroSection> {
       Future.delayed(const Duration(milliseconds: 2500), () {
         if (mounted) {
           _typingKey.currentState?.stopBlinking();
+          // Defer heavy project image loading until hero animation is completely finished
+          _precacheProjectAssets();
         }
       });
     });
@@ -134,31 +137,31 @@ class _HeroSectionState extends State<HeroSection> {
       child:
           isMobile
               ? _mobileLayout(isDark, screenSize.height)
-              : _desktopLayout(isDark),
+              : _desktopLayout(isDark, screenSize.height),
     );
   }
 
   // ── Desktop: side-by-side ──────────────────────────────────────
 
-  Widget _desktopLayout(bool isDark) {
-    return Row(
+  Widget _desktopLayout(bool isDark, double screenHeight) {
+    return Column(
       children: [
-        // Text column
-        Expanded(
-          flex: 5,
+        const Spacer(flex: 3), // ← equal space above model
+        SizedBox(
+          height: screenHeight * 0.40,
           child: Padding(
-            padding: const EdgeInsets.only(left: 64, right: 32),
-            child: _textContent(isDark),
+            padding: const EdgeInsets.symmetric(horizontal: 40),
+            child: const ModelViewerWidget(),
           ),
         ),
-        // 3D model column — revealed via CSS transition
-        const Expanded(
-          flex: 5,
-          child: Padding(
-            padding: EdgeInsets.all(24),
-            child: ModelViewerWidget(),
-          ),
+        const Spacer(flex: 2), // ← equal space below model
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: _textContent(isDark, false),
         ),
+        const Spacer(flex: 2), // ← equal space below text
+        _buildAnimatedCta(isDark),
+        const Spacer(flex: 1), // ← breathing room below CTA
       ],
     );
   }
@@ -183,7 +186,7 @@ class _HeroSectionState extends State<HeroSection> {
           const Spacer(flex: 3), // ← equal space below model
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: _textContent(isDark),
+            child: _textContent(isDark, true),
           ),
           const Spacer(), // ← breathing room below text
         ],
@@ -193,25 +196,25 @@ class _HeroSectionState extends State<HeroSection> {
 
   // ── Shared text / animation column ─────────────────────────────
 
-  Widget _textContent(bool isDark) {
+  Widget _textContent(bool isDark, bool isMobile) {
     final Color textPrimary =
         isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary;
     final Color textSecondary =
         isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary;
 
-    final TextStyle monoStyle = GoogleFonts.jetBrainsMono(
+    final TextStyle monoStyle = TextStyle(fontFamily: 'JetBrainsMono', 
       fontSize: 36,
       fontWeight: FontWeight.w700,
       color: textPrimary,
     );
 
-    final TextStyle hereStyle = GoogleFonts.inter(
+    final TextStyle hereStyle = TextStyle(fontFamily: 'Inter', 
       fontSize: 28,
       fontWeight: FontWeight.w300,
       color: textSecondary,
     );
 
-    final TextStyle taglineStyle = GoogleFonts.inter(
+    final TextStyle taglineStyle = TextStyle(fontFamily: 'Inter', 
       fontSize: 16,
       fontWeight: FontWeight.w400,
       color: textSecondary,
@@ -220,10 +223,12 @@ class _HeroSectionState extends State<HeroSection> {
     return AnimatedSize(
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
-      alignment: Alignment.topLeft,
+      clipBehavior: Clip.none,
+      alignment: isMobile ? Alignment.topLeft : Alignment.topCenter,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment:
+            isMobile ? CrossAxisAlignment.start : CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
           // ── Step 1 & 2: "3llips3s here..." ──
@@ -232,30 +237,51 @@ class _HeroSectionState extends State<HeroSection> {
             crossAxisAlignment: CrossAxisAlignment.baseline,
             textBaseline: TextBaseline.alphabetic,
             children: [
-              _showFinalName
-                  ? TransitionScramble(
-                    key: const ValueKey('final_transition'),
-                    initialText: 'G1ch1a_K',
-                    finalText: '3llips3s',
-                    initialStyle: monoStyle,
-                    finalStyle: monoStyle.copyWith(color: AppColors.primary),
-                    duration: const Duration(milliseconds: 1800),
-                    onComplete: _onScrambleComplete,
-                  )
-                  : TextScramble(
-                    key: const ValueKey('easter_egg'),
-                    text: 'G1ch1a_K',
-                    duration: const Duration(milliseconds: 600),
-                    style: monoStyle,
-                    onComplete: () {
-                      // Pause briefly on the easter egg, then sweep to the final public name
-                      Future.delayed(const Duration(milliseconds: 600), () {
-                        if (mounted) setState(() => _showFinalName = true);
-                      });
-                    },
+              // Stack pre-allocates the full username width to prevent
+              // layout shifts and clipping during the scramble animations.
+              Stack(
+                children: [
+                  Text(
+                    '3llips3s',
+                    style: monoStyle.copyWith(color: Colors.transparent),
                   ),
+                  _showFinalName
+                      ? TransitionScramble(
+                        key: const ValueKey('final_transition'),
+                        initialText: 'G1ch1a_K',
+                        finalText: '3llips3s',
+                        initialStyle: monoStyle,
+                        finalStyle: monoStyle.copyWith(
+                          color: AppColors.primary,
+                        ),
+                        duration: const Duration(milliseconds: 1800),
+                        onComplete: _onScrambleComplete,
+                      )
+                      : TextScramble(
+                        key: const ValueKey('easter_egg'),
+                        text: 'G1ch1a_K',
+                        duration: const Duration(milliseconds: 600),
+                        style: monoStyle,
+                        onComplete: () {
+                          // Pause briefly on the easter egg, then sweep to the final public name
+                          Future.delayed(const Duration(milliseconds: 600), () {
+                            if (mounted) setState(() => _showFinalName = true);
+                          });
+                        },
+                      ),
+                ],
+              ),
               const SizedBox(width: 12),
-              Text(_hereText, style: hereStyle),
+              Stack(
+                children: [
+                  // Invisible full text to establish final layout width immediately
+                  Text(
+                    'here...',
+                    style: hereStyle.copyWith(color: Colors.transparent),
+                  ),
+                  Text(_hereText, style: hereStyle),
+                ],
+              ),
             ],
           ),
 
@@ -265,31 +291,43 @@ class _HeroSectionState extends State<HeroSection> {
           AnimatedOpacity(
             opacity: _startTyping ? 1.0 : 0.0,
             duration: const Duration(milliseconds: 200),
-            child: TerminalTyping(
-              key: _typingKey,
-              text: 'I build mobile & web apps @ Studio 10200',
-              charDelay: const Duration(milliseconds: 60),
-              style: taglineStyle,
-              cursorColor: AppColors.primary,
-              onComplete: _onTypingComplete,
-              autoStart: false,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: isMobile ? Alignment.centerLeft : Alignment.center,
+              child: TerminalTyping(
+                key: _typingKey,
+                text: 'I build mobile & web apps @ Studio 10200',
+                charDelay: const Duration(milliseconds: 60),
+                style: taglineStyle,
+                cursorColor: AppColors.primary,
+                onComplete: _onTypingComplete,
+                autoStart: false,
+                finalCursorOpacity: isMobile ? 0.0 : 0.75,
+              ),
             ),
           ),
 
-          const SizedBox(height: 120),
-
-          // ── Step 4: "See My Work" CTA (Fade In + Slide Up) ──
-          AnimatedSlide(
-            offset: _showFinale ? Offset.zero : const Offset(0, 0.5),
-            duration: const Duration(milliseconds: 900),
-            curve: Curves.easeOutCubic,
-            child: AnimatedOpacity(
-              opacity: _showFinale ? 1.0 : 0.0,
-              duration: const Duration(milliseconds: 600),
-              child: Center(child: _seeMyWorkCta(isDark, textPrimary)),
-            ),
-          ),
+          if (isMobile) ...[
+            const SizedBox(height: 120),
+            // ── Step 4: "See My Work" CTA (Fade In + Slide Up) ──
+            _buildAnimatedCta(isDark),
+          ],
         ],
+      ),
+    );
+  }
+
+  Widget _buildAnimatedCta(bool isDark) {
+    final Color textPrimary =
+        isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary;
+    return AnimatedSlide(
+      offset: _showFinale ? Offset.zero : const Offset(0, 0.5),
+      duration: const Duration(milliseconds: 900),
+      curve: Curves.easeOutCubic,
+      child: AnimatedOpacity(
+        opacity: _showFinale ? 1.0 : 0.0,
+        duration: const Duration(milliseconds: 600),
+        child: Center(child: _seeMyWorkCta(isDark, textPrimary)),
       ),
     );
   }
@@ -308,7 +346,7 @@ class _HeroSectionState extends State<HeroSection> {
             // Static text — no animation
             Text(
               'see my work',
-              style: GoogleFonts.inter(
+              style: TextStyle(fontFamily: 'Inter', 
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
                 color: textColor,

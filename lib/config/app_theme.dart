@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 
 /// Provides [ThemeData] for dark (default) and light modes.
@@ -48,10 +47,10 @@ abstract final class AppTheme {
         isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary;
 
     // Monospace / terminal: JetBrains Mono (headings, titles, code)
-    final TextStyle mono = GoogleFonts.jetBrainsMono(color: textColor);
+    final TextStyle mono = TextStyle(fontFamily: 'JetBrainsMono', color: textColor);
     // Professional / body: Inter
-    final TextStyle body = GoogleFonts.inter(color: textColor);
-    final TextStyle bodySecondary = GoogleFonts.inter(color: secondaryColor);
+    final TextStyle body = TextStyle(fontFamily: 'Inter', color: textColor);
+    final TextStyle bodySecondary = TextStyle(fontFamily: 'Inter', color: secondaryColor);
 
     return TextTheme(
       // ── Display / Headline (JetBrains Mono) ──

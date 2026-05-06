@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../config/app_colors.dart';
 import '../../services/analytics_service.dart';
@@ -93,7 +92,7 @@ class _TerminalCTAState extends State<TerminalCTA> {
                         const SizedBox(width: 8),
                         Text(
                           '/3llips3s',
-                          style: GoogleFonts.jetBrainsMono(
+                          style: TextStyle(fontFamily: 'JetBrainsMono', 
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
                             color: textColor,

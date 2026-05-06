@@ -1,6 +1,5 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../config/app_colors.dart';
 import '../../config/project_data.dart';
 import '../../services/analytics_service.dart';
@@ -88,6 +87,8 @@ class ProjectCard extends StatelessWidget {
 
   // ── Screenshot Column ─────────────────────────────────────────────
   Widget _screenshotColumn(BuildContext context, Color textSecondary) {
+    final int imageCount = 1 + (project.galleryImages?.length ?? 0);
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -116,7 +117,27 @@ class ProjectCard extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(height: 24), // Minimum gap
+        if (imageCount > 0) ...[
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(imageCount, (index) {
+              return Container(
+                width: 6,
+                height: 6,
+                margin: const EdgeInsets.symmetric(horizontal: 3),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color:
+                      index == 0
+                          ? AppColors.primary
+                          : textSecondary.withValues(alpha: 0.3),
+                ),
+              );
+            }),
+          ),
+        ],
+        const SizedBox(height: 16), // Gap before actions
         // ── Secondary action buttons (share + feedback) ──
         _secondaryActions(context, textSecondary),
       ],
@@ -135,7 +156,7 @@ class ProjectCard extends StatelessWidget {
         // ── Title (Flush Top) ──
         Text(
           project.name,
-          style: GoogleFonts.jetBrainsMono(
+          style: TextStyle(fontFamily: 'JetBrainsMono', 
             fontSize: isMobile ? 18 : 22,
             fontWeight: FontWeight.w700,
             color: textPrimary,
@@ -153,7 +174,7 @@ class ProjectCard extends StatelessWidget {
             if (project.descriptionDe != null)
               Text(
                 project.descriptionDe!,
-                style: GoogleFonts.inter(
+                style: TextStyle(fontFamily: 'Inter', 
                   fontSize: isMobile ? 13 : 15,
                   fontWeight: FontWeight.w400,
                   color: textPrimary,
@@ -165,7 +186,7 @@ class ProjectCard extends StatelessWidget {
             if (project.descriptionEn != null)
               Text(
                 project.descriptionEn!,
-                style: GoogleFonts.inter(
+                style: TextStyle(fontFamily: 'Inter', 
                   fontSize: isMobile ? 12 : 13,
                   fontWeight: FontWeight.w400,
                   color:
@@ -304,7 +325,8 @@ class ProjectCard extends StatelessWidget {
     required bool isDark,
     required bool isMobile,
   }) {
-    final padding = EdgeInsets.symmetric(vertical: isMobile ? 12 : 14);
+    final padding = EdgeInsets.symmetric(vertical: isMobile ? 12 : 20);
+    final borderRadius = BorderRadius.circular(isMobile ? 8 : 6);
 
     final buttonStyle =
         filled
@@ -312,9 +334,7 @@ class ProjectCard extends StatelessWidget {
               backgroundColor: AppColors.primary,
               foregroundColor: Colors.white,
               padding: padding,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
+              shape: RoundedRectangleBorder(borderRadius: borderRadius),
             )
             : OutlinedButton.styleFrom(
               side: BorderSide(
@@ -324,9 +344,7 @@ class ProjectCard extends StatelessWidget {
                         : AppColors.lightDividerStrong,
               ),
               padding: padding,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
+              shape: RoundedRectangleBorder(borderRadius: borderRadius),
             );
 
     final child = Row(
@@ -337,7 +355,7 @@ class ProjectCard extends StatelessWidget {
         const SizedBox(width: 8),
         Text(
           label,
-          style: GoogleFonts.inter(
+          style: TextStyle(fontFamily: 'Inter', 
             fontSize: isMobile ? 13 : 14,
             fontWeight: FontWeight.w600,
             color:
@@ -425,7 +443,7 @@ class ProjectCard extends StatelessWidget {
                 title: Text(
                   "Quick Heads Up",
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.jetBrainsMono(
+                  style: TextStyle(fontFamily: 'JetBrainsMono', 
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                     color:
@@ -441,7 +459,7 @@ class ProjectCard extends StatelessWidget {
                   children: [
                     Text.rich(
                       TextSpan(
-                        style: GoogleFonts.inter(
+                        style: TextStyle(fontFamily: 'Inter', 
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
                           color:
@@ -467,7 +485,7 @@ class ProjectCard extends StatelessWidget {
                                     ),
                                 child: Text(
                                   'GitHub',
-                                  style: GoogleFonts.inter(
+                                  style: TextStyle(fontFamily: 'Inter', 
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500,
                                     color: AppColors.primaryLight,
@@ -519,7 +537,7 @@ class ProjectCard extends StatelessWidget {
                             const SizedBox(width: 12),
                             Text(
                               "Don't show this again",
-                              style: GoogleFonts.inter(
+                              style: TextStyle(fontFamily: 'Inter', 
                                 fontSize: 13,
                                 color:
                                     isDark
@@ -542,7 +560,7 @@ class ProjectCard extends StatelessWidget {
                     onPressed: () => Navigator.of(context).pop(),
                     child: Text(
                       'no, thanks',
-                      style: GoogleFonts.inter(
+                      style: TextStyle(fontFamily: 'Inter', 
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                         color:
@@ -582,7 +600,7 @@ class ProjectCard extends StatelessWidget {
                     ),
                     child: Text(
                       'sounds good',
-                      style: GoogleFonts.inter(
+                      style: TextStyle(fontFamily: 'Inter', 
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                       ),

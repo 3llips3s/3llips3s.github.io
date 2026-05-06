@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import '../../config/app_colors.dart';
 import 'terminal_quadrant.dart';
@@ -110,7 +109,7 @@ class _TerminalRegistryState extends State<TerminalRegistry> {
             // ── Header (Left Aligned) ──
             Text(
               'S T A C K',
-              style: GoogleFonts.jetBrainsMono(
+              style: TextStyle(fontFamily: 'JetBrainsMono', 
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
                 color: AppColors.primary,
@@ -123,7 +122,7 @@ class _TerminalRegistryState extends State<TerminalRegistry> {
             // ── Grid Layout ──
             if (isMobile) _buildMobileLayout() else _buildDesktopLayout(),
 
-            const SizedBox(height: 16),
+            SizedBox(height: isMobile ? 16 : 64),
 
             // ── GitHub CTA Finish ──
             Center(child: TerminalCTA(visible: _showCTA)),

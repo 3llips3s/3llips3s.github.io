@@ -12,6 +12,7 @@ class TerminalTyping extends StatefulWidget {
     this.cursorChar = '▌',
     this.onComplete,
     this.autoStart = true,
+    this.finalCursorOpacity = 0.0,
   });
 
   final String text;
@@ -21,6 +22,7 @@ class TerminalTyping extends StatefulWidget {
   final String cursorChar;
   final VoidCallback? onComplete;
   final bool autoStart;
+  final double finalCursorOpacity;
 
   @override
   State<TerminalTyping> createState() => TerminalTypingState();
@@ -94,12 +96,12 @@ class TerminalTypingState extends State<TerminalTyping>
       TextSpan(
         children: [
           TextSpan(text: displayed, style: style),
-          // Blinking cursor (invisible but maintains space if stopBlinking called)
+          // Blinking cursor (maintains space, can remain partially visible)
           WidgetSpan(
             alignment: PlaceholderAlignment.baseline,
             baseline: TextBaseline.alphabetic,
             child: Opacity(
-              opacity: _hideCursor ? 0.0 : 1.0,
+              opacity: _hideCursor ? widget.finalCursorOpacity : 1.0,
               child: FadeTransition(
                 opacity: _cursorBlink,
                 child: Text(

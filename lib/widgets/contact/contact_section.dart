@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import '../../config/app_colors.dart';
@@ -72,7 +71,7 @@ class _ContactSectionState extends State<ContactSection> {
             // ── Header (Matching others identically) ──
             Text(
               'H E L L O',
-              style: GoogleFonts.jetBrainsMono(
+              style: TextStyle(fontFamily: 'JetBrainsMono', 
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
                 color: AppColors.primary,
@@ -86,42 +85,66 @@ class _ContactSectionState extends State<ContactSection> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Animated Words (Left to Right Sequence)
-                Wrap(
-                  alignment: WrapAlignment.start,
-                  spacing: 6,
-                  runSpacing: 8,
-                  children: List.generate(words.length, (index) {
-                    return Text(
-                          words[index],
-                          style: GoogleFonts.inter(
-                            fontSize:
-                                isMobile
-                                    ? 18
-                                    : 24, // Smaller text fitting mostly on one line
-                            fontWeight: FontWeight.w400,
-                            color: textColor.withValues(
-                              alpha: 0.7,
-                            ), // Muted color structurally
-                            height: 1.4,
+                Builder(
+                  builder: (context) {
+                    final children = List.generate(words.length, (index) {
+                      final wordWidget = Text(
+                            words[index],
+                            style: TextStyle(fontFamily: 'Inter', 
+                              fontSize: isMobile ? 18 : 24,
+                              fontWeight: FontWeight.w400,
+                              color: textColor.withValues(alpha: 0.7),
+                              height: 1.4,
+                            ),
+                          )
+                          .animate(target: shouldAnimate ? 1 : 0)
+                          .fadeIn(
+                            duration: 800.ms,
+                            delay: Duration(
+                              milliseconds:
+                                  (index * 200) + (index > 4 ? 1200 : 0),
+                            ),
+                            curve: Curves.easeOut,
+                          )
+                          .moveX(
+                            begin: -20,
+                            end: 0,
+                            duration: 800.ms,
+                            delay: Duration(
+                              milliseconds:
+                                  (index * 200) + (index > 4 ? 1200 : 0),
+                            ),
+                          );
+
+                      if (isMobile) {
+                        return Padding(
+                          padding: EdgeInsets.only(
+                            right: index < words.length - 1 ? 6.0 : 0,
                           ),
-                        )
-                        .animate(target: shouldAnimate ? 1 : 0)
-                        .fadeIn(
-                          duration: 800.ms, // Slowed down
-                          delay: Duration(
-                            milliseconds: (index * 200) + (index > 4 ? 1200 : 0),
-                          ), // Larger stagger + 1200ms pause after "idea?"
-                          curve: Curves.easeOut,
-                        )
-                        .moveX(
-                          begin: -20,
-                          end: 0,
-                          duration: 800.ms,
-                          delay: Duration(
-                            milliseconds: (index * 200) + (index > 4 ? 1200 : 0),
-                          ),
+                          child: wordWidget,
                         );
-                  }),
+                      }
+                      return wordWidget;
+                    });
+
+                    if (isMobile) {
+                      return FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: children,
+                        ),
+                      );
+                    }
+
+                    return Wrap(
+                      alignment: WrapAlignment.start,
+                      spacing: 6,
+                      runSpacing: 8,
+                      children: children,
+                    );
+                  },
                 ),
 
                 const SizedBox(
@@ -160,7 +183,9 @@ class _ContactSectionState extends State<ContactSection> {
                                 vertical: 20,
                               ),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(
+                                  isMobile ? 12 : 6,
+                                ),
                               ),
                             ),
                             child: Row(
@@ -178,7 +203,7 @@ class _ContactSectionState extends State<ContactSection> {
                                 const SizedBox(width: 10),
                                 Text(
                                   'email me',
-                                  style: GoogleFonts.inter(
+                                  style: TextStyle(fontFamily: 'Inter', 
                                     fontWeight: FontWeight.w600,
                                     fontSize: 16,
                                     height: 1.0,
@@ -232,7 +257,7 @@ class _ContactSectionState extends State<ContactSection> {
                                           const SizedBox(width: 8),
                                           Text(
                                             "Email copied to clipboard!",
-                                            style: GoogleFonts.inter(
+                                            style: TextStyle(fontFamily: 'Inter', 
                                               fontSize: 14,
                                               fontWeight: FontWeight.w600,
                                               color: Colors.black87,
@@ -284,14 +309,16 @@ class _ContactSectionState extends State<ContactSection> {
                         begin: 40,
                         end: 0,
                         duration: 1000.ms,
-                        delay:
-                            Duration(milliseconds: words.length * 200 + 1200 + 800),
+                        delay: Duration(
+                          milliseconds: words.length * 200 + 1200 + 800,
+                        ),
                         curve: Curves.easeOutCubic,
                       )
                       .fadeIn(
                         duration: 1000.ms,
-                        delay:
-                            Duration(milliseconds: words.length * 200 + 1200 + 800),
+                        delay: Duration(
+                          milliseconds: words.length * 200 + 1200 + 800,
+                        ),
                       ),
                 ),
               ],

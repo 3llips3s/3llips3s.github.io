@@ -1,7 +1,6 @@
 import 'dart:js_interop';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:web/web.dart' as web;
 import '../config/app_colors.dart';
 
@@ -78,7 +77,7 @@ abstract final class ShareHelper {
             const SizedBox(width: 8),
             Text(
               text,
-              style: GoogleFonts.inter(
+              style: TextStyle(fontFamily: 'Inter', 
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: Colors.black87,

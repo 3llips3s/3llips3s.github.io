@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../config/app_colors.dart';
 import '../hero/terminal_typing.dart';
 import '../hero/text_scramble.dart';
@@ -49,13 +48,13 @@ class _TerminalQuadrantState extends State<TerminalQuadrant> {
     }
 
     // Styles
-    final TextStyle baseStyle = GoogleFonts.jetBrainsMono(
+    final TextStyle baseStyle = TextStyle(fontFamily: 'JetBrainsMono', 
       fontSize: 16,
       fontWeight: FontWeight.w400,
       color: currentOutputColor,
     );
 
-    final TextStyle promptStyle = GoogleFonts.jetBrainsMono(
+    final TextStyle promptStyle = TextStyle(fontFamily: 'JetBrainsMono', 
       fontSize: 16,
       fontWeight: FontWeight.w400,
       color: ghostPromptColor,
@@ -67,7 +66,7 @@ class _TerminalQuadrantState extends State<TerminalQuadrant> {
         : [];
 
     final TextStyle bloomingOutputStyle = baseStyle.copyWith(shadows: textShadows);
-    final TextStyle bloomingCommandStyle = GoogleFonts.jetBrainsMono(
+    final TextStyle bloomingCommandStyle = TextStyle(fontFamily: 'JetBrainsMono', 
       fontSize: 16,
       fontWeight: FontWeight.w400,
       color: commandColor,
@@ -183,7 +182,7 @@ class _BlinkingCursorState extends State<_BlinkingCursor> with SingleTickerProvi
     if (!widget.active) return const SizedBox.shrink();
     return FadeTransition(
       opacity: _anim,
-      child: Text('_', style: GoogleFonts.jetBrainsMono(color: widget.color, fontSize: 16)),
+      child: Text('_', style: TextStyle(fontFamily: 'JetBrainsMono', color: widget.color, fontSize: 16)),
     );
   }
 }

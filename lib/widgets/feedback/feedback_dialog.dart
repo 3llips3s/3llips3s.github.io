@@ -1,7 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../config/app_colors.dart';
 import '../../services/feedback_service.dart';
 import '../../utils/device_info_helper.dart';
@@ -189,7 +188,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
             const SizedBox(height: 16),
             Text(
               'thank you',
-              style: GoogleFonts.inter(
+              style: TextStyle(fontFamily: 'Inter', 
                 fontSize: 18,
                 fontWeight: FontWeight.w500,
                 color: textColor.withValues(alpha: 0.8),
@@ -220,7 +219,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
         Text(
           widget.projectName,
           textAlign: TextAlign.center,
-          style: GoogleFonts.jetBrainsMono(
+          style: TextStyle(fontFamily: 'JetBrainsMono', 
             fontSize: 16,
             fontWeight: FontWeight.w600,
             color: AppColors.primaryLight,
@@ -238,7 +237,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
           minLines: 3,
           onTap: () => _messageFocusNode.requestFocus(),
           textInputAction: TextInputAction.newline,
-          style: GoogleFonts.inter(
+          style: TextStyle(fontFamily: 'Inter', 
             fontSize: 14,
             fontWeight: FontWeight.w400,
             color: textColor,
@@ -246,7 +245,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
           ),
           decoration: InputDecoration(
             hintText: 'your feedback...',
-            hintStyle: GoogleFonts.inter(
+            hintStyle: TextStyle(fontFamily: 'Inter', 
               fontSize: 14,
               color: hintColor.withValues(alpha: 0.5),
             ),
@@ -274,7 +273,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
         TextField(
           controller: _emailController,
           keyboardType: TextInputType.emailAddress,
-          style: GoogleFonts.inter(
+          style: TextStyle(fontFamily: 'Inter', 
             fontSize: 14,
             fontWeight: FontWeight.w400,
             color: textColor,
@@ -282,7 +281,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
           ),
           decoration: InputDecoration(
             hintText: 'email (optional)',
-            hintStyle: GoogleFonts.inter(
+            hintStyle: TextStyle(fontFamily: 'Inter', 
               fontSize: 14,
               color: hintColor.withValues(alpha: 0.5),
             ),
@@ -324,7 +323,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
               ),
               child: Text(
                 'cancel',
-                style: GoogleFonts.inter(
+                style: TextStyle(fontFamily: 'Inter', 
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                   color: hintColor.withValues(alpha: 0.8),
@@ -362,7 +361,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
                       )
                       : Text(
                         'share',
-                        style: GoogleFonts.inter(
+                        style: TextStyle(fontFamily: 'Inter', 
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                         ),

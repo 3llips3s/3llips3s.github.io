@@ -396,15 +396,15 @@
   </div>
 
   <script>
-    // Remove loading indicator when Flutter captures the first frame
-    window.addEventListener('flutter-first-frame', function () {
+    // Called by Flutter after the shader warm-up frame completes
+    window.removeLoader = function () {
       const loader = document.getElementById('flutter-loading');
       if (loader) {
         loader.style.transition = 'opacity 0.3s ease';
         loader.style.opacity = '0';
         setTimeout(() => loader.remove(), 300);
       }
-    });
+    };
   </script>
 
   <script src="flutter_bootstrap.js" async></script>
