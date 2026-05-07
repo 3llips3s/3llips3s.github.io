@@ -41,14 +41,9 @@ class _HeroSectionState extends State<HeroSection> {
     _precacheAssets();
   }
 
-  /// Pre-cache 3D model poster for instant load.
+  /// Pre-cache assets.
   void _precacheAssets() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      precacheImage(
-        const AssetImage('assets/images/hoops_poster.webp'),
-        context,
-      );
-    });
+    // No-op for now; 3D model now auto-reveals on load in ModelViewerWidget
   }
 
   /// Heavy image precaching deferred to avoid jank during entrance animations.
@@ -63,14 +58,19 @@ class _HeroSectionState extends State<HeroSection> {
     }
   }
 
-  // ── Sequence callbacks ─────────────────────────────────────────
+  // ── Sequence Orchestration ──────────────────────────────────────
 
-  void _onScrambleComplete() {
-    const hereTarget = 'here...';
-    int index = 0;
+  /// Starts the coordinated "Layered Narrative" sequence.
+  /// Triggered exactly as the final username scramble begins.
+  void _startChoreography() {
+    if (!mounted) return;
 
-    Future.delayed(const Duration(milliseconds: 400), () {
+    // T = 2800ms: "here..." starts typing after the username has fully settled (takes ~700ms)
+    // Note: This is relative to the start of the final 1.8s TransitionScramble.
+    Future.delayed(const Duration(milliseconds: 2800), () {
       if (!mounted) return;
+      const hereTarget = 'here...';
+      int index = 0;
       _hereTimer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
         if (!mounted) {
           timer.cancel();
@@ -83,14 +83,12 @@ class _HeroSectionState extends State<HeroSection> {
           });
         } else {
           timer.cancel();
-          _onHereComplete();
         }
       });
     });
-  }
 
-  void _onHereComplete() {
-    Future.delayed(const Duration(milliseconds: 300), () {
+    // T = 4500ms: Tagline starts typing (gives everything a moment to breathe)
+    Future.delayed(const Duration(milliseconds: 4500), () {
       if (!mounted) return;
       setState(() => _startTyping = true);
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -100,19 +98,17 @@ class _HeroSectionState extends State<HeroSection> {
   }
 
   void _onTypingComplete() {
-    Future.delayed(const Duration(milliseconds: 500), () {
+    // Wait for the tagline to breathe and the cursor to blink a few times
+    Future.delayed(const Duration(milliseconds: 1200), () {
       if (!mounted) return;
+      
+      // Stop the blinking cursor as the CTA reveals for a unified transition
+      _typingKey.currentState?.stopBlinking();
       setState(() => _showFinale = true);
-      // Trigger the CSS-based fade + scale on the model-viewer element.
-      ModelViewerWidget.reveal();
 
-      // Stop cursor blinking after assets have settled (approx 2s entrance)
-      Future.delayed(const Duration(milliseconds: 2500), () {
-        if (mounted) {
-          _typingKey.currentState?.stopBlinking();
-          // Defer heavy project image loading until hero animation is completely finished
-          _precacheProjectAssets();
-        }
+      // Defer heavy project image loading until the entrance is fully complete
+      Future.delayed(const Duration(milliseconds: 1000), () {
+        if (mounted) _precacheProjectAssets();
       });
     });
   }
@@ -202,19 +198,22 @@ class _HeroSectionState extends State<HeroSection> {
     final Color textSecondary =
         isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary;
 
-    final TextStyle monoStyle = TextStyle(fontFamily: 'JetBrainsMono', 
+    final TextStyle monoStyle = TextStyle(
+      fontFamily: 'JetBrainsMono',
       fontSize: 36,
       fontWeight: FontWeight.w700,
       color: textPrimary,
     );
 
-    final TextStyle hereStyle = TextStyle(fontFamily: 'Inter', 
+    final TextStyle hereStyle = TextStyle(
+      fontFamily: 'Inter',
       fontSize: 28,
       fontWeight: FontWeight.w300,
       color: textSecondary,
     );
 
-    final TextStyle taglineStyle = TextStyle(fontFamily: 'Inter', 
+    final TextStyle taglineStyle = TextStyle(
+      fontFamily: 'Inter',
       fontSize: 16,
       fontWeight: FontWeight.w400,
       color: textSecondary,
@@ -255,7 +254,7 @@ class _HeroSectionState extends State<HeroSection> {
                           color: AppColors.primary,
                         ),
                         duration: const Duration(milliseconds: 1800),
-                        onComplete: _onScrambleComplete,
+                        onComplete: () {},
                       )
                       : TextScramble(
                         key: const ValueKey('easter_egg'),
@@ -265,7 +264,10 @@ class _HeroSectionState extends State<HeroSection> {
                         onComplete: () {
                           // Pause briefly on the easter egg, then sweep to the final public name
                           Future.delayed(const Duration(milliseconds: 600), () {
-                            if (mounted) setState(() => _showFinalName = true);
+                            if (mounted) {
+                              setState(() => _showFinalName = true);
+                              _startChoreography();
+                            }
                           });
                         },
                       ),
@@ -294,15 +296,27 @@ class _HeroSectionState extends State<HeroSection> {
             child: FittedBox(
               fit: BoxFit.scaleDown,
               alignment: isMobile ? Alignment.centerLeft : Alignment.center,
-              child: TerminalTyping(
-                key: _typingKey,
-                text: 'I build mobile & web apps @ Studio 10200',
-                charDelay: const Duration(milliseconds: 60),
-                style: taglineStyle,
-                cursorColor: AppColors.primary,
-                onComplete: _onTypingComplete,
-                autoStart: false,
-                finalCursorOpacity: isMobile ? 0.0 : 0.75,
+              child: Stack(
+                alignment: isMobile ? Alignment.centerLeft : Alignment.center,
+                children: [
+                  // Invisible full text to establish final layout width immediately.
+                  // This forces the column to perfectly center the tagline's final width
+                  // relative to the username+here block above it.
+                  Text(
+                    'I build mobile & web apps @ Studio 10200',
+                    style: taglineStyle.copyWith(color: Colors.transparent),
+                  ),
+                  TerminalTyping(
+                    key: _typingKey,
+                    text: 'I build mobile & web apps @ Studio 10200',
+                    charDelay: const Duration(milliseconds: 60),
+                    style: taglineStyle,
+                    cursorColor: AppColors.primary,
+                    onComplete: _onTypingComplete,
+                    autoStart: false,
+                    finalCursorOpacity: 0.0,
+                  ),
+                ],
               ),
             ),
           ),
@@ -346,7 +360,8 @@ class _HeroSectionState extends State<HeroSection> {
             // Static text — no animation
             Text(
               'see my work',
-              style: TextStyle(fontFamily: 'Inter', 
+              style: TextStyle(
+                fontFamily: 'Inter',
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
                 color: textColor,

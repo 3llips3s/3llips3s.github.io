@@ -1,3 +1,4 @@
+import 'dart:js_interop';
 import 'dart:ui_web' as ui_web;
 import 'package:flutter/material.dart';
 import 'package:web/web.dart' as web;
@@ -10,24 +11,6 @@ import 'package:web/web.dart' as web;
 /// which doesn't handle platform view transforms reliably on web.
 class ModelViewerWidget extends StatefulWidget {
   const ModelViewerWidget({super.key});
-
-  /// Trigger the CSS fade-in + scale-up animation.
-  /// Includes a small retry delay to ensure the platform view has 
-  /// been mounted into the DOM by the browser.
-  static void reveal() {
-    void attempt() {
-      final el = web.document.getElementById('studio-model-viewer')
-          as web.HTMLElement?;
-      if (el != null) {
-        el.style.setProperty('opacity', '1');
-        el.style.setProperty('transform', 'scale(1)');
-      } else {
-        // If not found (DOM latency), try one more time in 100ms
-        Future.delayed(const Duration(milliseconds: 100), attempt);
-      }
-    }
-    attempt();
-  }
 
   @override
   State<ModelViewerWidget> createState() => _ModelViewerWidgetState();
@@ -59,7 +42,6 @@ class _ModelViewerWidgetState extends State<ModelViewerWidget> {
         // ── Model source ────────────────────────────────────────
         // In Flutter Web production builds, assets are located at assets/assets/...
         element.setAttribute('src', 'assets/assets/3d/hoops.glb');
-        element.setAttribute('poster', 'assets/assets/images/hoops_poster.webp');
 
         // ── Orientation — rotate 90° on X-axis so hoops sit upright ──
         element.setAttribute('orientation', '90deg 0deg 0deg');
@@ -86,10 +68,20 @@ class _ModelViewerWidgetState extends State<ModelViewerWidget> {
         element.style.setProperty('opacity', '0');
         element.style.setProperty('transform', 'scale(0)');
         // CSS transition for the gentle fade + scale emergence.
+        // We use a dramatic ease-out (expo) curve to make the final settling
+        // feel extremely smooth and high-end.
         element.style.setProperty(
           'transition',
-          'opacity 1.2s ease-out, transform 1.6s cubic-bezier(0.25, 1, 0.5, 1)',
+          'opacity 2.2s ease-out, transform 3.2s cubic-bezier(0.16, 1, 0.3, 1)',
         );
+
+        // ── Auto-reveal on load ──────────────────────────────────
+        // Only trigger the CSS animation once the GLB is actually ready
+        // in the browser to ensure a smooth, non-jarring entrance.
+        element.addEventListener('load', (web.Event event) {
+          element.style.setProperty('opacity', '1');
+          element.style.setProperty('transform', 'scale(1)');
+        }.toJS);
 
         return element;
       },

@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:visibility_detector/visibility_detector.dart';
@@ -77,7 +78,7 @@ class ProjectRegistry extends StatelessWidget {
                         project: ProjectData.projects[secondIndex],
                         imageOnLeft: secondIndex % 2 == 0,
                         duration: 1000.ms,
-                        delay: 1000.ms, // 1000ms stagger for the second card in the row
+                        delay: 0.ms, // Delay is now managed naturally by the queue
                         slideBegin: 0.05,
                       ),
                     )
@@ -112,17 +113,39 @@ class _AnimatedProjectCard extends StatefulWidget {
 }
 
 class _AnimatedProjectCardState extends State<_AnimatedProjectCard> {
+  static final Queue<VoidCallback> _pendingAnimations = Queue();
+  static bool _isProcessingQueue = false;
+
   bool _isVisible = false;
+  bool _queued = false;
+
+  static void _processQueue() {
+    if (_isProcessingQueue || _pendingAnimations.isEmpty) return;
+    _isProcessingQueue = true;
+
+    final nextAnimation = _pendingAnimations.removeFirst();
+    nextAnimation();
+  }
 
   @override
   Widget build(BuildContext context) {
     return VisibilityDetector(
       key: ValueKey(widget.project.name),
       onVisibilityChanged: (info) {
-        if (info.visibleFraction > 0.15 && !_isVisible) {
-          setState(() {
-            _isVisible = true;
+        if (info.visibleFraction > 0.15 && !_isVisible && !_queued) {
+          _queued = true;
+          _pendingAnimations.addLast(() {
+            if (mounted) setState(() => _isVisible = true);
+            
+            // Stagger the next animation. Wait for the duration of this animation,
+            // minus 200ms to create a slight overlapping cascade.
+            final nextDelay = widget.duration - const Duration(milliseconds: 200);
+            Future.delayed(nextDelay, () {
+              _isProcessingQueue = false;
+              _processQueue();
+            });
           });
+          _processQueue();
         }
       },
       child: RepaintBoundary(
