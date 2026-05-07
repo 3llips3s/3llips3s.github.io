@@ -1,7 +1,7 @@
 # Studio 10200
 
 <p align="center">
-  <img src="assets/icons/studio10200_icon_full.png" alt="Studio 10200 Logo" width="320">
+  <img src="assets/screenshots/home.png" alt="Studio 10200 Logo" width="320">
 </p>
 
 ### Workshop
