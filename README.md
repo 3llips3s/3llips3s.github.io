@@ -6,7 +6,7 @@
 
 ### Workshop
 
-Welcome to **The Mothership**. This repo houses the central hub for Studio 10200, serving as both a portfolio and the orchestrator for various gaming and utility sub-projects.
+Welcome to **The Mothership**. This repo houses the central hub for Studio 10200, serving as both a portfolio and the home for various gaming and utility sub-projects.
 
 
 ## Key Features

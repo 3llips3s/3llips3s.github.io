@@ -156,7 +156,8 @@ class ProjectCard extends StatelessWidget {
         // ── Title (Flush Top) ──
         Text(
           project.name,
-          style: TextStyle(fontFamily: 'JetBrainsMono', 
+          style: TextStyle(
+            fontFamily: 'JetBrainsMono',
             fontSize: isMobile ? 18 : 22,
             fontWeight: FontWeight.w700,
             color: textPrimary,
@@ -171,22 +172,22 @@ class ProjectCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (project.descriptionDe != null)
-              Text(
-                project.descriptionDe!,
-                style: TextStyle(fontFamily: 'Inter', 
-                  fontSize: isMobile ? 13 : 15,
-                  fontWeight: FontWeight.w400,
-                  color: textPrimary,
-                  height: 1.5,
-                ),
+            Text(
+              project.description,
+              style: TextStyle(
+                fontFamily: 'Inter',
+                fontSize: isMobile ? 13 : 15,
+                fontWeight: FontWeight.w400,
+                color: textPrimary,
+                height: 1.5,
               ),
-            if (project.descriptionDe != null && project.descriptionEn != null)
+            ),
+            if (project.secondaryText != null) ...[
               SizedBox(height: isMobile ? 8 : 12),
-            if (project.descriptionEn != null)
               Text(
-                project.descriptionEn!,
-                style: TextStyle(fontFamily: 'Inter', 
+                project.secondaryText!,
+                style: TextStyle(
+                  fontFamily: 'Inter',
                   fontSize: isMobile ? 12 : 13,
                   fontWeight: FontWeight.w400,
                   color:
@@ -196,6 +197,7 @@ class ProjectCard extends StatelessWidget {
                   height: 1.4,
                 ),
               ),
+            ],
           ],
         ),
 
@@ -230,8 +232,8 @@ class ProjectCard extends StatelessWidget {
     if (hasPlay) {
       buttons.add(
         _actionButton(
-          label: 'Play',
-          icon: Icons.play_arrow_rounded,
+          label: project.primaryActionLabel ?? 'open',
+          icon: project.primaryActionIcon ?? Icons.open_in_new_rounded,
           onPressed: () {
             AnalyticsService.instance.logEvent(
               name: 'app_launch',
@@ -291,7 +293,7 @@ class ProjectCard extends StatelessWidget {
             ShareHelper.share(
               context,
               title: project.name,
-              text: '${project.name} — ${project.descriptionEn}',
+              text: '${project.name} — ${project.description}',
               url:
                   project.webUrl ??
                   'https://github.com/${ProjectData.githubOrg}/${project.repoName}',
@@ -355,7 +357,8 @@ class ProjectCard extends StatelessWidget {
         const SizedBox(width: 8),
         Text(
           label,
-          style: TextStyle(fontFamily: 'Inter', 
+          style: TextStyle(
+            fontFamily: 'Inter',
             fontSize: isMobile ? 13 : 14,
             fontWeight: FontWeight.w600,
             color:
@@ -443,7 +446,8 @@ class ProjectCard extends StatelessWidget {
                 title: Text(
                   "Quick Heads Up",
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontFamily: 'JetBrainsMono', 
+                  style: TextStyle(
+                    fontFamily: 'JetBrainsMono',
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                     color:
@@ -459,7 +463,8 @@ class ProjectCard extends StatelessWidget {
                   children: [
                     Text.rich(
                       TextSpan(
-                        style: TextStyle(fontFamily: 'Inter', 
+                        style: TextStyle(
+                          fontFamily: 'Inter',
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
                           color:
@@ -485,7 +490,8 @@ class ProjectCard extends StatelessWidget {
                                     ),
                                 child: Text(
                                   'GitHub',
-                                  style: TextStyle(fontFamily: 'Inter', 
+                                  style: TextStyle(
+                                    fontFamily: 'Inter',
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500,
                                     color: AppColors.primaryLight,
@@ -537,7 +543,8 @@ class ProjectCard extends StatelessWidget {
                             const SizedBox(width: 12),
                             Text(
                               "Don't show this again",
-                              style: TextStyle(fontFamily: 'Inter', 
+                              style: TextStyle(
+                                fontFamily: 'Inter',
                                 fontSize: 13,
                                 color:
                                     isDark
@@ -560,7 +567,8 @@ class ProjectCard extends StatelessWidget {
                     onPressed: () => Navigator.of(context).pop(),
                     child: Text(
                       'no, thanks',
-                      style: TextStyle(fontFamily: 'Inter', 
+                      style: TextStyle(
+                        fontFamily: 'Inter',
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                         color:
@@ -600,7 +608,8 @@ class ProjectCard extends StatelessWidget {
                     ),
                     child: Text(
                       'sounds good',
-                      style: TextStyle(fontFamily: 'Inter', 
+                      style: TextStyle(
+                        fontFamily: 'Inter',
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                       ),
