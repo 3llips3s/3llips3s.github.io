@@ -3,25 +3,25 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 import '../utils/device_info_helper.dart';
 
-/// Singleton analytics service for silent event logging.
+/// Provides a singleton service for logging application events to Supabase.
 ///
-/// Generates a unique [sessionId] at construction to track
-/// the user's journey within a single app session. All errors
-/// are caught and silently swallowed — analytics must never
-/// interrupt the user experience.
+/// Generates a unique [sessionId] upon initialization to track user journeys 
+/// within a single application session. All operations fail silently to ensure 
+/// that analytics tracking never interrupts the user experience.
 class AnalyticsService {
   AnalyticsService._() : sessionId = const Uuid().v4();
 
+  /// The global singleton instance of the [AnalyticsService].
   static final AnalyticsService instance = AnalyticsService._();
 
-  /// Unique ID for this app session, generated once at launch.
+  /// The unique identifier for the current application session.
   final String sessionId;
 
-  /// Logs an interaction event to the `studio_analytics` table.
+  /// Logs an interaction event to the backend analytics table.
   ///
-  /// [name] — event category (e.g. 'app_launch', 'engagement', 'external_intent')
-  /// [projectName] — optional project context (e.g. 'Artikel Vogel')
-  /// [interactionType] — specific action (e.g. 'web_play', 'share_click')
+  /// The [name] specifies the event category, while [interactionType] 
+  /// describes the specific action taken. An optional [projectName] can 
+  /// be provided to add project-specific context.
   Future<void> logEvent({
     required String name,
     String? projectName,
@@ -37,7 +37,6 @@ class AnalyticsService {
         'device_metadata': DeviceInfoHelper.collect(),
       });
     } catch (e) {
-      // Fail silently — analytics must never break the UX.
       debugPrint('Analytics silent fail: $e');
     }
   }

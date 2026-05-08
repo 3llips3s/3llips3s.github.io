@@ -3,11 +3,14 @@ import 'config/app_theme.dart';
 import 'screens/home_screen.dart';
 import 'widgets/shader_warmup.dart';
 
-/// Root widget — owns the theme mode state.
+/// The root widget of the application that manages the global [ThemeMode].
+///
+/// Wraps the entire application in a [MaterialApp] and orchestrates the 
+/// initial [AppShaderWarmup] transition.
 class StudioApp extends StatefulWidget {
   const StudioApp({super.key});
 
-  /// Global key so descendants can toggle theme without InheritedWidget.
+  /// Provides a global notifier for descendants to toggle the current [ThemeMode].
   static final ValueNotifier<ThemeMode> themeNotifier =
       ValueNotifier(ThemeMode.dark);
 

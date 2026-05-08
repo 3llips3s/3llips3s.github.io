@@ -4,13 +4,13 @@ import 'package:flutter/services.dart';
 import 'package:web/web.dart' as web;
 import '../config/app_colors.dart';
 
-/// Native browser Share API via `dart:js_interop`.
-///
-/// Falls back to copying the link to the clipboard if the Share API
-/// is not available (e.g. desktop browsers, or HTTP local environments).
+/// Provides utility methods for sharing content using the native browser Share API.
 abstract final class ShareHelper {
-  /// Share a project link using the native Share API.
-  /// Falls back to clipboard copy + Snackbar if unavailable.
+  /// Shares content using the native browser Share API.
+  ///
+  /// Requires a [title], [text], and [url]. If the native Share API is 
+  /// unavailable (e.g., on desktop browsers or insecure connections), it 
+  /// falls back to copying the [url] to the system clipboard.
   static Future<void> share(
     BuildContext context, {
     required String title,
@@ -24,10 +24,10 @@ abstract final class ShareHelper {
       final navigator = web.window.navigator;
       final shareData = web.ShareData(title: title, text: text, url: url);
 
-      // Note: navigator.share requires HTTPS.
-      // It will throw an error on localhost/HTTP causing the fallback to run.
+      // Navigator.share requires HTTPS and will throw on insecure connections, 
+      // triggering the clipboard fallback.
       await navigator.share(shareData).toDart;
-      return; // Share sheet successfully triggered!
+      return;
     } catch (_) {
       shareFailed = true;
     }
@@ -89,7 +89,7 @@ abstract final class ShareHelper {
         backgroundColor: color,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        // Hack to simulate top-aligned snackbar via bottom margin calculation
+        // Positions the snackbar at the top of the screen via margin offset.
         margin: EdgeInsets.only(
           bottom: topMargin > 0 ? topMargin : 24,
           left: 24,

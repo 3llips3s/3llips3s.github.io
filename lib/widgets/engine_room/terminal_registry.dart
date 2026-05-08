@@ -5,9 +5,14 @@ import '../../config/app_colors.dart';
 import 'terminal_quadrant.dart';
 import 'terminal_cta.dart';
 
+/// Represents the data required for a single terminal quadrant.
 class QuadrantData {
+  /// The command string for the quadrant.
   final String command;
+
+  /// The resulting output string for the quadrant.
   final String output;
+
   QuadrantData(this.command, this.output);
 }
 
@@ -18,8 +23,13 @@ final List<QuadrantData> _registryData = [
   QuadrantData('ls ops', 'Git, GitHub, Wiredash'),
 ];
 
-/// The Engine Room replacement. A zero-frame terminal system report.
+/// A section that simulates a terminal interface to display the technical stack.
+///
+/// Orchestrates a sequential animation of [TerminalQuadrant] widgets, showing
+/// commands and their corresponding technology labels. The [onComplete] callback
+/// is triggered after the entire sequence finishes.
 class TerminalRegistry extends StatefulWidget {
+  /// Optional callback invoked after all quadrants complete their animation.
   final VoidCallback? onComplete;
 
   const TerminalRegistry({super.key, this.onComplete});
@@ -106,10 +116,10 @@ class _TerminalRegistryState extends State<TerminalRegistry> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── Header (Left Aligned) ──
             Text(
               'S T A C K',
-              style: TextStyle(fontFamily: 'JetBrainsMono', 
+              style: TextStyle(
+                fontFamily: 'JetBrainsMono',
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
                 color: AppColors.primary,
@@ -118,13 +128,8 @@ class _TerminalRegistryState extends State<TerminalRegistry> {
             ),
 
             const SizedBox(height: 80),
-
-            // ── Grid Layout ──
             if (isMobile) _buildMobileLayout() else _buildDesktopLayout(),
-
             SizedBox(height: isMobile ? 16 : 64),
-
-            // ── GitHub CTA Finish ──
             Center(child: TerminalCTA(visible: _showCTA)),
           ],
         ),

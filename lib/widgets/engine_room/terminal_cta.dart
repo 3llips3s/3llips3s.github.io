@@ -4,7 +4,12 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../config/app_colors.dart';
 import '../../services/analytics_service.dart';
 
+/// A call-to-action widget that displays a link to the GitHub profile.
+///
+/// Animates into view with a staggered transition and provides a hover glow 
+/// effect. The [visible] parameter gates the entrance animation.
 class TerminalCTA extends StatefulWidget {
+  /// Whether the CTA is visible and should trigger its entrance animation.
   final bool visible;
 
   const TerminalCTA({super.key, required this.visible});

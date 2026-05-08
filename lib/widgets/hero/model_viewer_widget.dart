@@ -3,12 +3,11 @@ import 'dart:ui_web' as ui_web;
 import 'package:flutter/material.dart';
 import 'package:web/web.dart' as web;
 
-/// Displays the 3D hoops model using Google's `<model-viewer>` web component
-/// embedded directly in the page via [HtmlElementView].
+/// Displays a 3D model using the Google `<model-viewer>` web component.
 ///
-/// Starts hidden and slides down smoothly via CSS transitions when
-/// [reveal] is called. CSS animations bypass Flutter's compositor
-/// which doesn't handle platform view transforms reliably on web.
+/// Embeds the web component via [HtmlElementView] and utilizes native CSS 
+/// transitions for a smooth fade and scale emergence. This bypasses Flutter's 
+/// compositor to ensure high-performance rendering on the web.
 class ModelViewerWidget extends StatefulWidget {
   const ModelViewerWidget({super.key});
 
@@ -35,30 +34,16 @@ class _ModelViewerWidgetState extends State<ModelViewerWidget> {
       (int viewId, {Object? params}) {
         final element =
             web.document.createElement('model-viewer') as web.HTMLElement;
-
-        // ── Identity (for JS-driven animation) ──────────────────
         element.id = 'studio-model-viewer';
-
-        // ── Model source ────────────────────────────────────────
-        // In Flutter Web production builds, assets are located at assets/assets/...
         element.setAttribute('src', 'assets/assets/3d/hoops.glb');
 
-        // ── Orientation — rotate 90° on X-axis so hoops sit upright ──
         element.setAttribute('orientation', '90deg 0deg 0deg');
-
-        // ── Rotation (camera orbits the model) ──────────────────
         element.setAttribute('auto-rotate', '');
         element.setAttribute('auto-rotate-delay', '0');
-        element.setAttribute('rotation-per-second', '12deg'); // 2 RPM
-
-        // ── Play embedded animations if the GLB contains any ────
+        element.setAttribute('rotation-per-second', '12deg');
         element.setAttribute('autoplay', '');
-
-        // ── Disable all interaction ─────────────────────────────
         element.setAttribute('interaction-prompt', 'none');
         element.setAttribute('loading', 'eager');
-
-        // ── Initial state: hidden + scaled to zero ──────────────
         element.style.setProperty('width', '100%');
         element.style.setProperty('height', '100%');
         element.style.setProperty('background-color', 'transparent');
@@ -67,17 +52,11 @@ class _ModelViewerWidgetState extends State<ModelViewerWidget> {
         element.style.setProperty('border', 'none');
         element.style.setProperty('opacity', '0');
         element.style.setProperty('transform', 'scale(0)');
-        // CSS transition for the gentle fade + scale emergence.
-        // We use a dramatic ease-out (expo) curve to make the final settling
-        // feel extremely smooth and high-end.
         element.style.setProperty(
           'transition',
           'opacity 2.2s ease-out, transform 3.2s cubic-bezier(0.16, 1, 0.3, 1)',
         );
 
-        // ── Auto-reveal on load ──────────────────────────────────
-        // Only trigger the CSS animation once the GLB is actually ready
-        // in the browser to ensure a smooth, non-jarring entrance.
         element.addEventListener('load', (web.Event event) {
           element.style.setProperty('opacity', '1');
           element.style.setProperty('transform', 'scale(1)');

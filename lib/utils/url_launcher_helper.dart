@@ -1,8 +1,8 @@
 import 'package:url_launcher/url_launcher.dart';
 
-/// Convenience wrappers around [url_launcher] for common link types.
+/// Provides utility methods for launching external URLs and system applications.
 abstract final class UrlLauncherHelper {
-  /// Open an external HTTP/HTTPS URL in the system browser.
+  /// Opens an external HTTP/HTTPS URL in the default system browser.
   static Future<void> openUrl(String url) async {
     final uri = Uri.parse(url);
     if (await canLaunchUrl(uri)) {
@@ -10,7 +10,7 @@ abstract final class UrlLauncherHelper {
     }
   }
 
-  /// Open the default mail client with a pre-filled recipient.
+  /// Launches the default system mail client to send an email to the given [address].
   static Future<void> sendEmail(String address) async {
     final uri = Uri(scheme: 'mailto', path: address);
     if (await canLaunchUrl(uri)) {

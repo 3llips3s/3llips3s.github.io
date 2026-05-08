@@ -2,15 +2,26 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 
-/// Animates text using a character-by-character scramble effect.
+/// A widget that animates text using a character-by-character scramble effect.
 ///
-/// Each character goes through three phases:
-///   1. **Scramble** — fully random characters
-///   2. **Settle** — flickers between random and final value
-///   3. **Lock** — shows the final character permanently
-///
-/// This creates a smooth left-to-right "decryption" feel.
+/// Transitions each character through a random scramble and a flicker phase 
+/// before locking onto the final value, creating a "decryption" aesthetic.
 class TextScramble extends StatefulWidget {
+  /// The final text string to be revealed.
+  final String text;
+
+  /// The total duration of the scramble animation.
+  final Duration duration;
+
+  /// The style to apply to the text.
+  final TextStyle? style;
+
+  /// Optional callback invoked when the scramble animation finishes.
+  final VoidCallback? onComplete;
+
+  /// Whether to start the animation automatically upon initialization.
+  final bool autoStart;
+
   const TextScramble({
     super.key,
     required this.text,
@@ -19,12 +30,6 @@ class TextScramble extends StatefulWidget {
     this.onComplete,
     this.autoStart = true,
   });
-
-  final String text;
-  final Duration duration;
-  final TextStyle? style;
-  final VoidCallback? onComplete;
-  final bool autoStart;
 
   @override
   State<TextScramble> createState() => TextScrambleState();
@@ -42,10 +47,7 @@ class TextScrambleState extends State<TextScramble> {
   late final List<int> _lockTimeMs;
   int _elapsedMs = 0;
 
-  // How long before lock each character starts "settling"
-  // (flickering between random and final).
   static const int _settleMs = 180;
-  // Pure scramble phase before any character starts settling.
   static const int _pureScrambleMs = 300;
 
   @override
@@ -65,6 +67,7 @@ class TextScrambleState extends State<TextScramble> {
     }
   }
 
+  /// Begins the character-by-character scramble animation.
   void start() {
     if (_isComplete || _hasStarted) return;
     _hasStarted = true;
@@ -88,11 +91,8 @@ class TextScrambleState extends State<TextScramble> {
         final int lockTime = _lockTimeMs[i];
 
         if (_elapsedMs >= lockTime) {
-          // ── Phase 3: Locked ──
           buf.writeCharCode(widget.text.codeUnitAt(i));
         } else if (_elapsedMs >= lockTime - _settleMs) {
-          // ── Phase 2: Settling ──
-          // Increasing probability of showing the final character.
           final double progress =
               (_elapsedMs - (lockTime - _settleMs)) / _settleMs;
           if (_random.nextDouble() < progress) {
@@ -102,7 +102,6 @@ class TextScrambleState extends State<TextScramble> {
           }
           allLocked = false;
         } else {
-          // ── Phase 1: Pure scramble ──
           buf.writeCharCode(_randomCharCode());
           allLocked = false;
         }

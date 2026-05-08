@@ -1,20 +1,36 @@
 import 'package:flutter/material.dart';
 
-/// Data model and content manifest for the Project Registry.
+/// Represents metadata for a single project in the registry.
 class ProjectInfo {
+  /// The display name of the project.
   final String name;
-  final String
-  description; // Primary description (e.g., German for older projects, English for newer ones)
-  final String? secondaryText; // Optional subtitle or translation
+
+  /// The primary description of the project.
+  final String description;
+
+  /// Optional secondary text, such as a translation or technical subtitle.
+  final String? secondaryText;
+
+  /// Path to the primary screenshot asset.
   final String screenshotPath;
-  final List<String>?
-  galleryImages; // Optional additional screenshots for Lightbox View
-  final String? webUrl; // null → no "Play" button
-  final String? apkUrl; // null → no "Download" button
-  final String repoName; // GitHub repo name for share links
-  final String? primaryActionLabel; // Optional override (defaults to "Play")
-  final IconData?
-  primaryActionIcon; // Optional override (defaults to play_arrow_rounded)
+
+  /// Optional additional screenshot assets for the gallery view.
+  final List<String>? galleryImages;
+
+  /// The URL for the web version of the project, if available.
+  final String? webUrl;
+
+  /// The URL for the APK download, if available.
+  final String? apkUrl;
+
+  /// The GitHub repository name used for links and sharing.
+  final String repoName;
+
+  /// Optional label override for the primary action button (defaults to "Open").
+  final String? primaryActionLabel;
+
+  /// Optional icon override for the primary action button (defaults to [Icons.open_in_new_rounded]).
+  final IconData? primaryActionIcon;
 
   const ProjectInfo({
     required this.name,
@@ -30,9 +46,12 @@ class ProjectInfo {
   });
 }
 
-/// Content Manifest (Section 8 of project guide).
+/// Central registry containing all project metadata and global constants.
 abstract final class ProjectData {
+  /// The GitHub organization or username owning the repositories.
   static const String githubOrg = '3llips3s';
+
+  /// The base domain for hosted projects.
   static const String baseDomain = 'studio10200.dev';
 
   static const List<ProjectInfo> projects = [
@@ -47,7 +66,7 @@ abstract final class ProjectData {
       apkUrl:
           'https://github.com/3llips3s/artikel-vogel/releases/latest/download/artikel_vogel.apk',
       repoName: 'artikel-vogel',
-      primaryActionLabel: 'play',
+      primaryActionLabel: 'Play',
       primaryActionIcon: Icons.play_arrow_rounded,
     ),
     ProjectInfo(
@@ -60,7 +79,7 @@ abstract final class ProjectData {
       apkUrl:
           'https://github.com/3llips3s/hangmensch/releases/latest/download/hangmensch.apk',
       repoName: 'hangmensch',
-      primaryActionLabel: 'play',
+      primaryActionLabel: 'Play',
       primaryActionIcon: Icons.play_arrow_rounded,
     ),
     ProjectInfo(
@@ -68,7 +87,7 @@ abstract final class ProjectData {
       description:
           'Setze dein X oder Ö mit dem richtigen Genus und schlage deine Gegner im Solo-, Pass-und-Play- oder Online-Modus mit Leaderboard.',
       secondaryText:
-          'Claim your X or O with the correct noun gender and beat your opponents in solo, pass-and-play, or online mode with a leaderboard.',
+          'Claim your X or Ö with the correct noun gender and beat your opponents in solo, pass-and-play, or online mode with a leaderboard.',
       screenshotPath: 'assets/screenshots/zwo.png',
       galleryImages: [
         'assets/screenshots/zwo_2.png',
@@ -78,7 +97,7 @@ abstract final class ProjectData {
       apkUrl:
           'https://github.com/3llips3s/tic-tac-zwo/releases/latest/download/tic_tac_zwo.apk',
       repoName: 'tic-tac-zwo',
-      primaryActionLabel: 'play',
+      primaryActionLabel: 'Play',
       primaryActionIcon: Icons.play_arrow_rounded,
     ),
     ProjectInfo(
@@ -89,7 +108,7 @@ abstract final class ProjectData {
       webUrl: 'https://studio10200.dev/wordle/',
       apkUrl: null, // Web Only
       repoName: 'wordle',
-      primaryActionLabel: 'play',
+      primaryActionLabel: 'Play',
       primaryActionIcon: Icons.play_arrow_rounded,
     ),
   ];

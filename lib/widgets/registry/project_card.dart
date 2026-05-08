@@ -8,20 +8,23 @@ import '../../utils/share_helper.dart';
 import '../../utils/url_launcher_helper.dart';
 import '../feedback/feedback_dialog.dart';
 
-/// Side-by-side project card for portrait screenshots.
+/// A card that displays detailed information about a portfolio project.
 ///
-/// Layout is side-by-side (Row) on both mobile and desktop so the tall
-/// screenshot is fully visible without dominating vertical scroll space.
-/// Buttons stack vertically on mobile to fit the narrower text column.
+/// Features a side-by-side layout optimized for portrait screenshots. Includes
+/// a title, description, primary actions (e.g., open, download), and secondary
+/// actions (e.g., share, feedback).
 class ProjectCard extends StatelessWidget {
+  /// The project metadata to be displayed in the card.
+  final ProjectInfo project;
+
+  /// Whether the screenshot should be positioned on the left side of the card.
+  final bool imageOnLeft;
+
   const ProjectCard({
     super.key,
     required this.project,
     required this.imageOnLeft,
   });
-
-  final ProjectInfo project;
-  final bool imageOnLeft;
 
   @override
   Widget build(BuildContext context) {
@@ -55,13 +58,11 @@ class ProjectCard extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
         child: Padding(
-          // Master padding explicitly offset (top reduced) because Flutter's internal
-          // typographic line-height math forces visual top-heaviness when mathematically symmetric.
           padding: EdgeInsets.only(
-            top: isMobile ? 16 : 28, // Finetuned optical center
-            bottom: isMobile ? 24 : 32, // Physical mathematical bound
-            left: isMobile ? 16 : 32, // Standard lateral bound
-            right: isMobile ? 16 : 32, // Standard lateral bound
+            top: isMobile ? 16 : 28,
+            bottom: isMobile ? 24 : 32,
+            left: isMobile ? 16 : 32,
+            right: isMobile ? 16 : 32,
           ),
           child: IntrinsicHeight(
             child: Row(
@@ -85,14 +86,12 @@ class ProjectCard extends StatelessWidget {
     );
   }
 
-  // ── Screenshot Column ─────────────────────────────────────────────
   Widget _screenshotColumn(BuildContext context, Color textSecondary) {
     final int imageCount = 1 + (project.galleryImages?.length ?? 0);
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        // Image scales to column width, establishing natural height
         MouseRegion(
           cursor: SystemMouseCursors.zoomIn,
           child: GestureDetector(
@@ -137,14 +136,12 @@ class ProjectCard extends StatelessWidget {
             }),
           ),
         ],
-        const SizedBox(height: 16), // Gap before actions
-        // ── Secondary action buttons (share + feedback) ──
+        const SizedBox(height: 16),
         _secondaryActions(context, textSecondary),
       ],
     );
   }
 
-  // ── Text content + actions ────────────────────────────────────────
   Widget _content(BuildContext context, bool isDark, bool isMobile) {
     final Color textPrimary =
         isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary;
@@ -153,7 +150,6 @@ class ProjectCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        // ── Title (Flush Top) ──
         Text(
           project.name,
           style: TextStyle(
@@ -166,8 +162,6 @@ class ProjectCard extends StatelessWidget {
         ),
 
         const SizedBox(height: 16),
-
-        // ── Descriptions (Centered) ──
         Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -183,7 +177,7 @@ class ProjectCard extends StatelessWidget {
               ),
             ),
             if (project.secondaryText != null) ...[
-              SizedBox(height: isMobile ? 8 : 12),
+              SizedBox(height: isMobile ? 8 : 16),
               Text(
                 project.secondaryText!,
                 style: TextStyle(
@@ -202,14 +196,11 @@ class ProjectCard extends StatelessWidget {
         ),
 
         const SizedBox(height: 16),
-
-        // ── Primary action buttons (Flush Bottom) ──
         _primaryActions(context, isDark, isMobile),
       ],
     );
   }
 
-  // ── Primary: Download (left/top) / Play (right/bottom) ────────────
   Widget _primaryActions(BuildContext context, bool isDark, bool isMobile) {
     final bool hasPlay = project.webUrl != null;
     final bool hasDownload = project.apkUrl != null;
@@ -232,7 +223,7 @@ class ProjectCard extends StatelessWidget {
     if (hasPlay) {
       buttons.add(
         _actionButton(
-          label: project.primaryActionLabel ?? 'open',
+          label: project.primaryActionLabel ?? 'Open',
           icon: project.primaryActionIcon ?? Icons.open_in_new_rounded,
           onPressed: () {
             AnalyticsService.instance.logEvent(
@@ -272,7 +263,6 @@ class ProjectCard extends StatelessWidget {
     }
   }
 
-  // ── Secondary: Share + Feedback — centered below image ──────────────
   Widget _secondaryActions(BuildContext context, Color textSecondary) {
     // Mute the icons heavily so the eye ignores them until explicitly sought out
     final mutedColor = textSecondary.withValues(alpha: 0.3);
@@ -318,7 +308,6 @@ class ProjectCard extends StatelessWidget {
     );
   }
 
-  // ── Action Button Builder ──────────────────────────────────────────
   Widget _actionButton({
     required String label,
     required IconData icon,
@@ -349,11 +338,14 @@ class ProjectCard extends StatelessWidget {
               shape: RoundedRectangleBorder(borderRadius: borderRadius),
             );
 
+    final Color foregroundColor =
+        filled ? Colors.white : AppColors.primaryLight;
+
     final child = Row(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(icon, size: 18),
+        Icon(icon, size: 18, color: foregroundColor),
         const SizedBox(width: 8),
         Text(
           label,
@@ -361,12 +353,7 @@ class ProjectCard extends StatelessWidget {
             fontFamily: 'Inter',
             fontSize: isMobile ? 13 : 14,
             fontWeight: FontWeight.w600,
-            color:
-                filled
-                    ? Colors.white
-                    : (isDark
-                        ? AppColors.darkTextPrimary
-                        : AppColors.lightTextPrimary),
+            color: foregroundColor,
           ),
         ),
       ],
@@ -387,7 +374,6 @@ class ProjectCard extends StatelessWidget {
     );
   }
 
-  // ── Small icon button ──────────────────────────────────────────────
   Widget _iconButton({
     required IconData icon,
     required String tooltip,
@@ -413,7 +399,6 @@ class ProjectCard extends StatelessWidget {
     );
   }
 
-  // ── APK Download Interceptor ───────────────────────────────────────
   void _handleApkDownload(BuildContext context, String url, bool isDark) {
     if (LocalStorageHelper.readBool('skip_apk_disclaimer')) {
       AnalyticsService.instance.logEvent(
@@ -624,7 +609,6 @@ class ProjectCard extends StatelessWidget {
     );
   }
 
-  // ── Lightbox Viewer ────────────────────────────────────────────────
   void _openLightbox(BuildContext context) {
     final images = [project.screenshotPath, ...(project.galleryImages ?? [])];
     final PageController pageController = PageController();

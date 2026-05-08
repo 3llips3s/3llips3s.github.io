@@ -6,10 +6,10 @@ import '../widgets/registry/project_registry.dart';
 import '../widgets/engine_room/terminal_registry.dart';
 import '../widgets/contact/contact_section.dart';
 
-/// The single-page portfolio, assembled from section widgets.
+/// The primary entry point for the portfolio application.
 ///
-/// Each section (Hero, Registry, Engine Room, Contact, Footer)
-/// will be added as a child of the scroll view in later phases.
+/// Assembles the various sections (Hero, Registry, Engine Room, Contact) 
+/// into a single-page scrolling experience.
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -23,6 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _isTerminalComplete = false;
   bool _isContactAnimComplete = false;
 
+  /// Scrolls the application back to the top of the view.
   void _scrollToTop() {
     _scrollController.animateTo(
       0,
@@ -37,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  /// Smooth-scroll to the Project Registry section.
+  /// Smooth-scrolls the view to the [ProjectRegistry] section.
   void _scrollToRegistry() {
     final ctx = _registryKey.currentContext;
     if (ctx != null) {
@@ -61,21 +62,14 @@ class _HomeScreenState extends State<HomeScreen> {
           controller: _scrollController,
           child: Column(
             children: [
-              // ── Hero Section ──
               HeroSection(onSeeMyWork: _scrollToRegistry),
-
-              // ── Project Registry ──
               ProjectRegistry(key: _registryKey),
-
-              // ── Engine Room (Phase 4) ──
               TerminalRegistry(
                 onComplete: () {
                   if (!mounted) return;
                   setState(() => _isTerminalComplete = true);
                 },
               ),
-
-              // ── Contact (Phase 5) ──
               ContactSection(
                 isTerminalComplete: _isTerminalComplete,
                 onAnimationComplete: () {
@@ -84,8 +78,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   }
                 },
               ),
-
-              // ── Footer (Phase 5) ──
               Padding(
                 padding: EdgeInsets.only(
                   bottom: 32,

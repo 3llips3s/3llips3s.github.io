@@ -5,16 +5,17 @@ import '../../config/app_colors.dart';
 import '../../services/feedback_service.dart';
 import '../../utils/device_info_helper.dart';
 
-/// Radiant, inviting feedback dialog matching the Studio aesthetic.
+/// A dialog that allows users to submit feedback for a specific project.
 ///
-/// Triggered from project card secondary actions. The [projectName]
-/// is displayed as a non-editable pill badge at the top of the dialog.
+/// Displays a blurred backdrop and provides a form for entering a message 
+/// and an optional email address. Submissions are handled by [FeedbackService].
 class FeedbackDialog extends StatefulWidget {
+  /// The name of the project for which feedback is being submitted.
   final String projectName;
 
   const FeedbackDialog({super.key, required this.projectName});
 
-  /// Convenience method to show the dialog from any context.
+  /// Displays the [FeedbackDialog] from the given [context].
   static void show(BuildContext context, {required String projectName}) {
     showGeneralDialog(
       context: context,
@@ -98,9 +99,8 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
     final double screenWidth = MediaQuery.sizeOf(context).width;
     final double dialogWidth =
-        screenWidth < 768 ? screenWidth - 48 : 400; // Narrower max width
+        screenWidth < 768 ? screenWidth - 48 : 400;
 
-    // ── Radiant color palette ──────────────────────────────────────
     final Color dialogBg =
         isDark
             ? const Color(
@@ -161,8 +161,6 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
     );
   }
 
-  // ── Success State ──────────────────────────────────────────────────
-
   Widget _buildSuccessState(Color textColor) {
     return SizedBox(
       height: 360, // Mirrors the approximate height of the form layout
@@ -201,8 +199,6 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
     );
   }
 
-  // ── Form State ─────────────────────────────────────────────────────
-
   Widget _buildForm({
     required bool isDark,
     required Color textColor,
@@ -215,7 +211,6 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // ── Project Title ──
         Text(
           widget.projectName,
           textAlign: TextAlign.center,
@@ -228,8 +223,6 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
         ),
 
         const SizedBox(height: 24),
-
-        // ── Message Field ──
         TextField(
           controller: _messageController,
           focusNode: _messageFocusNode,
@@ -268,8 +261,6 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
         ),
 
         const SizedBox(height: 16),
-
-        // ── Email Field (optional) ──
         TextField(
           controller: _emailController,
           keyboardType: TextInputType.emailAddress,
@@ -307,8 +298,6 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
         ),
 
         const SizedBox(height: 20),
-
-        // ── Actions ──
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [

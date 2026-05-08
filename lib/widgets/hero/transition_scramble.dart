@@ -2,9 +2,32 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 
-/// Unscrambles text from an initial string to a final string, letter by letter.
-/// It uses a RichText canvas to seamlessly transition between two TextStyles.
+/// A widget that unscrambles text from an initial string to a final string.
+///
+/// Utilizes [Text.rich] to transition between two strings and their respective 
+/// [TextStyle]s character-by-character, creating a "morphing" effect.
 class TransitionScramble extends StatefulWidget {
+  /// The starting text string.
+  final String initialText;
+
+  /// The target text string to be revealed.
+  final String finalText;
+
+  /// The style to apply to the initial text.
+  final TextStyle initialStyle;
+
+  /// The style to apply to the final text.
+  final TextStyle finalStyle;
+
+  /// The total duration of the transition.
+  final Duration duration;
+
+  /// Optional callback invoked when the transition finishes.
+  final VoidCallback? onComplete;
+
+  /// Whether to start the animation automatically upon initialization.
+  final bool autoStart;
+
   const TransitionScramble({
     super.key,
     required this.initialText,
@@ -16,14 +39,6 @@ class TransitionScramble extends StatefulWidget {
     this.autoStart = true,
   }) : assert(initialText.length == finalText.length,
             'initialText and finalText must be the same length');
-
-  final String initialText;
-  final String finalText;
-  final TextStyle initialStyle;
-  final TextStyle finalStyle;
-  final Duration duration;
-  final VoidCallback? onComplete;
-  final bool autoStart;
 
   @override
   State<TransitionScramble> createState() => _TransitionScrambleState();
@@ -50,13 +65,14 @@ class _TransitionScrambleState extends State<TransitionScramble> {
     }
   }
 
+  /// Begins the character-by-character transition animation.
   void start() {
     if (_isComplete || _hasStarted) return;
     _hasStarted = true;
     _elapsedMs = 0;
     _currentIndex = 0;
 
-    const int frameMs = 32; // ~30 fps is good for rapid scrambling
+    const int frameMs = 32;
     final int charDurationMs = widget.duration.inMilliseconds ~/ widget.finalText.length;
 
     _timer = Timer.periodic(const Duration(milliseconds: frameMs), (_) {
@@ -103,13 +119,10 @@ class _TransitionScrambleState extends State<TransitionScramble> {
 
     for (int i = 0; i < widget.finalText.length; i++) {
       if (i < _currentIndex) {
-        // Locked correctly in the final text and final style
         spans.add(TextSpan(text: widget.finalText[i], style: widget.finalStyle));
       } else if (i == _currentIndex) {
-        // Actively scrambling in the final style color (infecting the white text)
         spans.add(TextSpan(text: _getRandomChar(), style: widget.finalStyle));
       } else {
-        // Idle initial text in the initial style
         spans.add(TextSpan(text: widget.initialText[i], style: widget.initialStyle));
       }
     }

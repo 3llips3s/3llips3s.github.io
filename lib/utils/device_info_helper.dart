@@ -1,11 +1,11 @@
 import 'package:web/web.dart' as web;
 
-/// Collects device metadata from the browser environment.
+/// Provides utility methods for collecting device metadata from the browser.
 ///
-/// Used by both [AnalyticsService] and [FeedbackService] to capture
-/// user agent, screen size, platform, and a simplified browser label.
+/// Used by [AnalyticsService] and [FeedbackService] to capture 
+/// context such as the user agent, screen dimensions, and platform.
 abstract final class DeviceInfoHelper {
-  /// Returns a JSON-serializable map with device metadata.
+  /// Collects and returns a JSON-serializable map with device metadata.
   static Map<String, dynamic> collect() {
     try {
       final userAgent = web.window.navigator.userAgent;
@@ -30,7 +30,7 @@ abstract final class DeviceInfoHelper {
 
   /// Parses a human-readable label from the user agent string.
   ///
-  /// Examples: "Chrome 120 / macOS", "Safari 17 / iOS", "Firefox 121 / Windows"
+  /// For example, returns "Chrome 120 / macOS" or "Safari 17 / iOS".
   static String _parseBrowserLabel(String ua) {
     String browser = 'Unknown';
     String os = 'Unknown';

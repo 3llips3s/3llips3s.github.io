@@ -3,13 +3,38 @@ import '../../config/app_colors.dart';
 import '../hero/terminal_typing.dart';
 import '../hero/text_scramble.dart';
 
-enum QuadrantState { idle, typing, scrambling, bloomed, settled }
+/// Defines the lifecycle states of a [TerminalQuadrant] animation.
+enum QuadrantState { 
+  /// Waiting to start.
+  idle, 
+  /// Typing the initial command.
+  typing, 
+  /// Scrambling the output results.
+  scrambling, 
+  /// Applying a visual bloom effect.
+  bloomed, 
+  /// Finished and dimmed.
+  settled 
+}
 
+/// A single quadrant within the terminal registry that displays a command and its output.
+///
+/// Orchestrates the transition from typing a [command] to scrambling the [output] 
+/// text based on the current [state].
 class TerminalQuadrant extends StatefulWidget {
+  /// The command string to be typed.
   final String command;
+
+  /// The resulting output string to be scrambled.
   final String output;
+
+  /// The current animation state of the quadrant.
   final QuadrantState state;
+
+  /// Invoked when the [command] typing animation finishes.
   final VoidCallback onCommandComplete;
+
+  /// Invoked when the [output] scramble animation finishes.
   final VoidCallback onOutputComplete;
 
   const TerminalQuadrant({

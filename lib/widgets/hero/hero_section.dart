@@ -8,25 +8,22 @@ import 'text_scramble.dart';
 import 'transition_scramble.dart';
 import 'terminal_typing.dart';
 
-/// Full-viewport hero section with 3D model and animated intro sequence.
+/// The landing section of the portfolio featuring a 3D model and animated intro.
 ///
-/// Animation timeline:
-///   Frame 1    → Scramble "3llips3s" (1200 ms)
-///   +400 ms    → Fade in "here..." letter-by-letter (no cursor)
-///   +300 ms    → Start typing tagline with blinking cursor
-///   +500 ms    → Fade-in + scale-up 3D model  &  Fade-in + slide-up CTA
+/// Orchestrates a complex, multi-phase animation sequence that transitions from 
+/// a username scramble to a tagline reveal. This section adapts its layout for 
+/// both mobile and desktop viewports.
 class HeroSection extends StatefulWidget {
-  const HeroSection({super.key, this.onSeeMyWork});
-
-  /// Callback to smooth-scroll to the Project Registry.
+  /// Optional callback invoked when the "see my work" action is triggered.
   final VoidCallback? onSeeMyWork;
+
+  const HeroSection({super.key, this.onSeeMyWork});
 
   @override
   State<HeroSection> createState() => _HeroSectionState();
 }
 
 class _HeroSectionState extends State<HeroSection> {
-  // ── Animation phase flags ──────────────────────────────────────
   String _hereText = '';
   bool _startTyping = false;
   bool _showFinale = false;
@@ -41,12 +38,9 @@ class _HeroSectionState extends State<HeroSection> {
     _precacheAssets();
   }
 
-  /// Pre-cache assets.
   void _precacheAssets() {
-    // No-op for now; 3D model now auto-reveals on load in ModelViewerWidget
   }
 
-  /// Heavy image precaching deferred to avoid jank during entrance animations.
   void _precacheProjectAssets() {
     for (final project in ProjectData.projects) {
       precacheImage(AssetImage(project.screenshotPath), context);
@@ -58,15 +52,9 @@ class _HeroSectionState extends State<HeroSection> {
     }
   }
 
-  // ── Sequence Orchestration ──────────────────────────────────────
-
-  /// Starts the coordinated "Layered Narrative" sequence.
-  /// Triggered exactly as the final username scramble begins.
   void _startChoreography() {
     if (!mounted) return;
 
-    // T = 2800ms: "here..." starts typing after the username has fully settled (takes ~700ms)
-    // Note: This is relative to the start of the final 1.8s TransitionScramble.
     Future.delayed(const Duration(milliseconds: 2800), () {
       if (!mounted) return;
       const hereTarget = 'here...';
@@ -87,7 +75,6 @@ class _HeroSectionState extends State<HeroSection> {
       });
     });
 
-    // T = 4500ms: Tagline starts typing (gives everything a moment to breathe)
     Future.delayed(const Duration(milliseconds: 4500), () {
       if (!mounted) return;
       setState(() => _startTyping = true);
@@ -98,15 +85,12 @@ class _HeroSectionState extends State<HeroSection> {
   }
 
   void _onTypingComplete() {
-    // Wait for the tagline to breathe and the cursor to blink a few times
     Future.delayed(const Duration(milliseconds: 1200), () {
       if (!mounted) return;
       
-      // Stop the blinking cursor as the CTA reveals for a unified transition
       _typingKey.currentState?.stopBlinking();
       setState(() => _showFinale = true);
 
-      // Defer heavy project image loading until the entrance is fully complete
       Future.delayed(const Duration(milliseconds: 1000), () {
         if (mounted) _precacheProjectAssets();
       });
@@ -137,7 +121,7 @@ class _HeroSectionState extends State<HeroSection> {
     );
   }
 
-  // ── Desktop: side-by-side ──────────────────────────────────────
+  // ── Desktop Layout ──
 
   Widget _desktopLayout(bool isDark, double screenHeight) {
     return Column(
@@ -162,10 +146,7 @@ class _HeroSectionState extends State<HeroSection> {
     );
   }
 
-  // ── Mobile: stacked ────────────────────────────────────────────
-  //
-  // Two equal Spacers above and below the model guarantee that the
-  // model always has the same gap to the address bar as to the text.
+  // ── Mobile Layout ──
 
   Widget _mobileLayout(bool isDark, double screenHeight) {
     return SafeArea(

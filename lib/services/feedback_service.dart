@@ -1,11 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-/// Thin service wrapper for inserting feedback into the Supabase `feedback` table.
-///
-/// Keeps the dialog widget free of direct Supabase import details.
+/// Manages the submission of user feedback to Supabase.
 abstract final class FeedbackService {
-  /// Submits user feedback. Returns `true` on success, `false` on failure.
+  /// Submits user feedback to the backend.
+  ///
+  /// Returns `true` if the submission was successful, otherwise `false`. 
+  /// Requires a [message] and [projectName], with an optional [contactEmail]. 
+  /// The [deviceInfo] map is included for debugging context.
   static Future<bool> submit({
     required String message,
     required String projectName,

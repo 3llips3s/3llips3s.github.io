@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
 
-/// Provides [ThemeData] for dark (default) and light modes.
+/// Provides the centralized [ThemeData] for Studio 10200.
+///
+/// Supports dark (default) and light modes, utilizing JetBrains Mono for 
+/// headings and titles, and Inter for primary body content.
 abstract final class AppTheme {
-  // ── Dark Theme (Default) ───────────────────────────────────────
+  /// The default dark theme configuration.
   static ThemeData get dark => ThemeData(
         brightness: Brightness.dark,
         scaffoldBackgroundColor: AppColors.darkScaffold,
@@ -20,7 +23,7 @@ abstract final class AppTheme {
         useMaterial3: true,
       );
 
-  // ── Light Theme ────────────────────────────────────────────────
+  /// The light theme configuration.
   static ThemeData get light => ThemeData(
         brightness: Brightness.light,
         scaffoldBackgroundColor: AppColors.lightScaffold,
@@ -37,8 +40,10 @@ abstract final class AppTheme {
         useMaterial3: true,
       );
 
-  // ── Typography ─────────────────────────────────────────────────
-
+  /// Builds a [TextTheme] based on the provided [brightness].
+  ///
+  /// Maps typography styles to JetBrains Mono (headlines/titles) and 
+  /// Inter (body/labels).
   static TextTheme _buildTextTheme(Brightness brightness) {
     final bool isDark = brightness == Brightness.dark;
     final Color textColor =
@@ -46,30 +51,24 @@ abstract final class AppTheme {
     final Color secondaryColor =
         isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary;
 
-    // Monospace / terminal: JetBrains Mono (headings, titles, code)
     final TextStyle mono = TextStyle(fontFamily: 'JetBrainsMono', color: textColor);
-    // Professional / body: Inter
     final TextStyle body = TextStyle(fontFamily: 'Inter', color: textColor);
     final TextStyle bodySecondary = TextStyle(fontFamily: 'Inter', color: secondaryColor);
 
     return TextTheme(
-      // ── Display / Headline (JetBrains Mono) ──
       displayLarge: mono.copyWith(fontSize: 48, fontWeight: FontWeight.w700),
       displayMedium: mono.copyWith(fontSize: 36, fontWeight: FontWeight.w700),
       displaySmall: mono.copyWith(fontSize: 28, fontWeight: FontWeight.w600),
       headlineLarge: mono.copyWith(fontSize: 24, fontWeight: FontWeight.w600),
       headlineMedium: mono.copyWith(fontSize: 20, fontWeight: FontWeight.w600),
       headlineSmall: mono.copyWith(fontSize: 18, fontWeight: FontWeight.w600),
-      // ── Title (JetBrains Mono) ──
       titleLarge: mono.copyWith(fontSize: 20, fontWeight: FontWeight.w700),
       titleMedium: mono.copyWith(fontSize: 16, fontWeight: FontWeight.w600),
       titleSmall: mono.copyWith(fontSize: 14, fontWeight: FontWeight.w600),
-      // ── Body (Inter) ──
       bodyLarge: body.copyWith(fontSize: 16, fontWeight: FontWeight.w400),
       bodyMedium: body.copyWith(fontSize: 14, fontWeight: FontWeight.w400),
       bodySmall: bodySecondary.copyWith(
           fontSize: 12, fontWeight: FontWeight.w400),
-      // ── Label (Inter) ──
       labelLarge: body.copyWith(fontSize: 14, fontWeight: FontWeight.w500),
       labelMedium: body.copyWith(fontSize: 12, fontWeight: FontWeight.w500),
       labelSmall: bodySecondary.copyWith(
@@ -77,8 +76,7 @@ abstract final class AppTheme {
     );
   }
 
-  // ── Scrollbar ──────────────────────────────────────────────────
-
+  /// Configures the global [ScrollbarThemeData] based on [brightness].
   static ScrollbarThemeData _scrollbarTheme(Brightness brightness) {
     return ScrollbarThemeData(
       thumbColor: WidgetStateProperty.resolveWith((states) {

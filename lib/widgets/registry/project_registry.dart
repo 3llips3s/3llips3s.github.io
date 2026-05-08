@@ -6,7 +6,10 @@ import '../../config/app_colors.dart';
 import '../../config/project_data.dart';
 import 'project_card.dart';
 
-/// Section that displays all projects in a stacked vertical layout.
+/// A section that displays the portfolio projects in an adaptive grid.
+///
+/// Automatically switches between a single-column layout for mobile and a 
+/// multi-column layout for desktop viewports.
 class ProjectRegistry extends StatelessWidget {
   const ProjectRegistry({super.key});
 
@@ -24,7 +27,6 @@ class ProjectRegistry extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Section heading ──
           Padding(
             padding: EdgeInsets.symmetric(horizontal: isMobile ? 24 : 48),
             child: Column(
@@ -45,14 +47,13 @@ class ProjectRegistry extends StatelessWidget {
 
           const SizedBox(height: 40),
 
-          // ── Project cards ──
           if (isMobile)
             ...List.generate(ProjectData.projects.length, (index) {
               return _AnimatedProjectCard(
                 project: ProjectData.projects[index],
                 imageOnLeft: index % 2 == 0,
                 duration: 1200.ms,
-                delay: 0.ms, // Triggers immediately when visible
+                delay: 0.ms,
                 slideBegin: 0.15,
               );
             })
@@ -78,7 +79,7 @@ class ProjectRegistry extends StatelessWidget {
                         project: ProjectData.projects[secondIndex],
                         imageOnLeft: secondIndex % 2 == 0,
                         duration: 1000.ms,
-                        delay: 0.ms, // Delay is now managed naturally by the queue
+                        delay: 0.ms,
                         slideBegin: 0.05,
                       ),
                     )

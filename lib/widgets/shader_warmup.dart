@@ -5,13 +5,16 @@ import 'package:flutter/material.dart';
 @JS('window.removeLoader')
 external void _removeLoader();
 
-/// An invisible widget that forces the GPU to compile all the core
-/// shaders (opacity, transform, clip, blur, text) before the first
-/// real frame of the app is shown.
+/// A widget that compiles core shaders before the application is fully visible.
 ///
-/// Once the warm-up frame renders, it calls [onWarmupComplete] and
-/// explicitly dismisses the HTML CSS loader.
+/// Occupies a 1x1 pixel space while forcing a complex [Stack] of children to 
+/// paint at a larger size, triggering the compilation of opacity, transform, 
+/// clip, blur, and text shaders. 
+///
+/// Once the warm-up frame renders, it invokes [onWarmupComplete] and 
+/// dismisses the native HTML loader via the JavaScript `window.removeLoader` hook.
 class AppShaderWarmup extends StatefulWidget {
+  /// The callback invoked once the shader warm-up is complete.
   final VoidCallback onWarmupComplete;
 
   const AppShaderWarmup({

@@ -6,8 +6,16 @@ import '../../config/app_colors.dart';
 import '../../services/analytics_service.dart';
 import '../../utils/url_launcher_helper.dart';
 
+/// A section providing contact information and a primary call to action.
+///
+/// Expands to fill the available width and utilizes a [VisibilityDetector] to 
+/// trigger a staggered entrance animation for the contact text and buttons. 
+/// The animation sequence is gated by [isTerminalComplete].
 class ContactSection extends StatefulWidget {
+  /// Indicates whether the preceding terminal animation sequence is complete.
   final bool isTerminalComplete;
+
+  /// Optional callback invoked after the section's entrance animation finishes.
   final VoidCallback? onAnimationComplete;
 
   const ContactSection({
@@ -37,11 +45,8 @@ class _ContactSectionState extends State<ContactSection> {
     final words = _contactText.split(' ');
     final bool shouldAnimate = _isVisible && widget.isTerminalComplete;
 
-    // Fire the completion callback once after the full animation sequence
     if (shouldAnimate && !_hasFiredComplete) {
       _hasFiredComplete = true;
-      // Total: words(9) × 200ms stagger + 1200ms pause + 800ms breathing + 1000ms button slide
-      // Added +1000ms extra delay for breathing room before the footer arrow fades in.
       final totalMs = words.length * 200 + 1200 + 800 + 1000 + 1000;
       Future.delayed(Duration(milliseconds: totalMs), () {
         widget.onAnimationComplete?.call();
@@ -68,7 +73,6 @@ class _ContactSectionState extends State<ContactSection> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── Header (Matching others identically) ──
             Text(
               'H E L L O',
               style: TextStyle(fontFamily: 'JetBrainsMono', 
@@ -79,8 +83,6 @@ class _ContactSectionState extends State<ContactSection> {
               ),
             ),
             const SizedBox(height: 80),
-
-            // ── Body & Actions ──
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -147,17 +149,13 @@ class _ContactSectionState extends State<ContactSection> {
                   },
                 ),
 
-                const SizedBox(
-                  height: 80,
-                ), // Extended explicit breathing room below words
-                // Actions Group (Centered Below Text explicitly overcoming flush-left parent)
+                const SizedBox(height: 80),
                 Align(
                   alignment: Alignment.center,
                   child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          // Spacer perfectly balances the 56px Copy Button + 16px Padding ensuring the Email button itself sits dead center on the screen.
                           const SizedBox(width: 72),
 
                           // Primary Action: Email
