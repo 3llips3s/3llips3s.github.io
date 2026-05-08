@@ -3,7 +3,7 @@ import 'package:web/web.dart' as web;
 
 /// Provides simplified access to the native browser `localStorage` API.
 abstract final class LocalStorageHelper {
-  /// Reads a boolean value from the browser's [localStorage].
+  /// Reads a boolean value from the browser's `localStorage`.
   ///
   /// Returns `false` if the platform is not web, if the [key] does not exist, 
   /// or if storage access is restricted.
@@ -17,7 +17,7 @@ abstract final class LocalStorageHelper {
     }
   }
 
-  /// Writes a boolean [value] to the browser's [localStorage] at the given [key].
+  /// Writes a boolean [value] to the browser's `localStorage` at the given [key].
   ///
   /// This is a no-op on non-web platforms or if storage access is restricted.
   static void writeBool(String key, bool value) {

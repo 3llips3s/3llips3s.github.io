@@ -87,7 +87,7 @@ class TerminalTypingState extends State<TerminalTyping>
     });
   }
 
-  /// Stops the cursor blinking and applies [finalCursorOpacity].
+  /// Stops the cursor blinking and applies [TerminalTyping.finalCursorOpacity].
   void stopBlinking() {
     _cursorBlink.stop();
     setState(() {
