@@ -129,7 +129,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
           padding: const EdgeInsets.all(32),
           decoration: BoxDecoration(
             color: dialogBg,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(8),
             border: Border.all(
               color: AppColors.primary.withValues(alpha: 0.15),
               width: 1,
@@ -246,15 +246,15 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
             fillColor: fieldFill,
             contentPadding: const EdgeInsets.all(16),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(6),
               borderSide: BorderSide(color: borderColor),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(6),
               borderSide: BorderSide(color: borderColor),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(6),
               borderSide: BorderSide(color: AppColors.primaryLight, width: 1.5),
             ),
           ),
@@ -283,15 +283,15 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
               vertical: 14,
             ),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(6),
               borderSide: BorderSide(color: borderColor),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(6),
               borderSide: BorderSide(color: borderColor),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(6),
               borderSide: BorderSide(color: AppColors.primaryLight, width: 1.5),
             ),
           ),
@@ -335,7 +335,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
                   vertical: 12,
                 ),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(6),
                 ),
               ),
               child:

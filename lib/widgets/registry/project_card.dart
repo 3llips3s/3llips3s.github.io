@@ -50,13 +50,13 @@ class ProjectCard extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: isDark ? AppColors.darkCard : AppColors.lightCard,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: isDark ? AppColors.darkDivider : AppColors.lightDivider,
         ),
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(8),
         child: Padding(
           padding: EdgeInsets.only(
             top: isMobile ? 16 : 28,
@@ -99,7 +99,7 @@ class ProjectCard extends StatelessWidget {
             child: Hero(
               tag: project.screenshotPath,
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(4),
                 child: Image.asset(
                   project.screenshotPath,
                   fit: BoxFit.contain,
@@ -317,7 +317,10 @@ class ProjectCard extends StatelessWidget {
     required bool isMobile,
   }) {
     final padding = EdgeInsets.symmetric(vertical: isMobile ? 12 : 20);
-    final borderRadius = BorderRadius.circular(isMobile ? 8 : 6);
+    final borderRadius = BorderRadius.circular(4);
+
+    final Color foregroundColor =
+        filled ? Colors.white : AppColors.primaryLight;
 
     final buttonStyle =
         filled
@@ -329,17 +332,12 @@ class ProjectCard extends StatelessWidget {
             )
             : OutlinedButton.styleFrom(
               side: BorderSide(
-                color:
-                    isDark
-                        ? AppColors.darkDividerStrong
-                        : AppColors.lightDividerStrong,
+                color: foregroundColor.withValues(alpha: 0.5),
+                width: 1.5, // Slightly thicker border for premium feel
               ),
               padding: padding,
               shape: RoundedRectangleBorder(borderRadius: borderRadius),
             );
-
-    final Color foregroundColor =
-        filled ? Colors.white : AppColors.primaryLight;
 
     final child = Row(
       mainAxisSize: MainAxisSize.min,
