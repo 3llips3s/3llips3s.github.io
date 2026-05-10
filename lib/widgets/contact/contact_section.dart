@@ -8,8 +8,8 @@ import '../../utils/url_launcher_helper.dart';
 
 /// A section providing contact information and a primary call to action.
 ///
-/// Expands to fill the available width and utilizes a [VisibilityDetector] to 
-/// trigger a staggered entrance animation for the contact text and buttons. 
+/// Expands to fill the available width and utilizes a [VisibilityDetector] to
+/// trigger a staggered entrance animation for the contact text and buttons.
 /// The animation sequence is gated by [isTerminalComplete].
 class ContactSection extends StatefulWidget {
   /// Indicates whether the preceding terminal animation sequence is complete.
@@ -32,7 +32,7 @@ class _ContactSectionState extends State<ContactSection> {
   bool _isVisible = false;
   bool _hasFiredComplete = false;
 
-  final String _contactText = "Do you have an idea? Let's build it :)";
+  final String _contactText = "Have an idea? Let's bring it to life :)";
   final String _emailAddress = 'contact@studio10200.dev';
 
   @override
@@ -75,7 +75,8 @@ class _ContactSectionState extends State<ContactSection> {
           children: [
             Text(
               'H E L L O',
-              style: TextStyle(fontFamily: 'JetBrainsMono', 
+              style: TextStyle(
+                fontFamily: 'JetBrainsMono',
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
                 color: AppColors.primary,
@@ -92,7 +93,8 @@ class _ContactSectionState extends State<ContactSection> {
                     final children = List.generate(words.length, (index) {
                       final wordWidget = Text(
                             words[index],
-                            style: TextStyle(fontFamily: 'Inter', 
+                            style: TextStyle(
+                              fontFamily: 'Inter',
                               fontSize: isMobile ? 18 : 24,
                               fontWeight: FontWeight.w400,
                               color: textColor.withValues(alpha: 0.7),
@@ -182,7 +184,7 @@ class _ContactSectionState extends State<ContactSection> {
                               ),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(
-                                  isMobile ? 12 : 6,
+                                  isMobile ? 8 : 6,
                                 ),
                               ),
                             ),
@@ -201,7 +203,8 @@ class _ContactSectionState extends State<ContactSection> {
                                 const SizedBox(width: 10),
                                 Text(
                                   'email me',
-                                  style: TextStyle(fontFamily: 'Inter', 
+                                  style: TextStyle(
+                                    fontFamily: 'Inter',
                                     fontWeight: FontWeight.w600,
                                     fontSize: 16,
                                     height: 1.0,
@@ -255,7 +258,8 @@ class _ContactSectionState extends State<ContactSection> {
                                           const SizedBox(width: 8),
                                           Text(
                                             "Email copied to clipboard!",
-                                            style: TextStyle(fontFamily: 'Inter', 
+                                            style: TextStyle(
+                                              fontFamily: 'Inter',
                                               fontSize: 14,
                                               fontWeight: FontWeight.w600,
                                               color: Colors.black87,
