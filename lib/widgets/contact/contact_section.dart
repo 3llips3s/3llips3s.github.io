@@ -49,7 +49,7 @@ class _ContactSectionState extends State<ContactSection> {
     if (shouldAnimate && !_hasFiredComplete) {
       _hasFiredComplete = true;
       // Staggered delay: words + pause + breathing room + button duration
-      final totalMs = (words.length * 200) + 1200 + 800 + 800 + 1000;
+      final totalMs = (words.length * 200) + 1200 + 800 + 800 + 1200;
       Future.delayed(Duration(milliseconds: totalMs), () {
         widget.onAnimationComplete?.call();
       });
@@ -108,7 +108,8 @@ class _ContactSectionState extends State<ContactSection> {
                             duration: 800.ms,
                             delay: Duration(
                               milliseconds:
-                                  (index * 200) + (index > questionIndex ? 1200 : 0),
+                                  (index * 200) +
+                                  (index > questionIndex ? 1200 : 0),
                             ),
                             curve: Curves.easeOut,
                           )
@@ -118,7 +119,8 @@ class _ContactSectionState extends State<ContactSection> {
                             duration: 800.ms,
                             delay: Duration(
                               milliseconds:
-                                  (index * 200) + (index > questionIndex ? 1200 : 0),
+                                  (index * 200) +
+                                  (index > questionIndex ? 1200 : 0),
                             ),
                           );
 
@@ -312,14 +314,14 @@ class _ContactSectionState extends State<ContactSection> {
                       .moveX(
                         begin: 40,
                         end: 0,
-                        duration: 1000.ms,
+                        duration: 1200.ms,
                         delay: Duration(
                           milliseconds: words.length * 200 + 1200 + 800 + 800,
                         ),
-                        curve: Curves.easeOutCubic,
+                        curve: Curves.easeInOutCubic,
                       )
                       .fadeIn(
-                        duration: 1000.ms,
+                        duration: 900.ms,
                         delay: Duration(
                           milliseconds: words.length * 200 + 1200 + 800 + 800,
                         ),
