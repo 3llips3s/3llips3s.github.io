@@ -43,11 +43,13 @@ class _ContactSectionState extends State<ContactSection> {
         isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary;
 
     final words = _contactText.split(' ');
+    final questionIndex = words.indexWhere((w) => w.contains('?'));
     final bool shouldAnimate = _isVisible && widget.isTerminalComplete;
 
     if (shouldAnimate && !_hasFiredComplete) {
       _hasFiredComplete = true;
-      final totalMs = words.length * 200 + 1200 + 800 + 1000 + 1000;
+      // Staggered delay: words + pause + breathing room + button duration
+      final totalMs = (words.length * 200) + 1200 + 800 + 800 + 1000;
       Future.delayed(Duration(milliseconds: totalMs), () {
         widget.onAnimationComplete?.call();
       });
@@ -106,7 +108,7 @@ class _ContactSectionState extends State<ContactSection> {
                             duration: 800.ms,
                             delay: Duration(
                               milliseconds:
-                                  (index * 200) + (index > 4 ? 1200 : 0),
+                                  (index * 200) + (index > questionIndex ? 1200 : 0),
                             ),
                             curve: Curves.easeOut,
                           )
@@ -116,7 +118,7 @@ class _ContactSectionState extends State<ContactSection> {
                             duration: 800.ms,
                             delay: Duration(
                               milliseconds:
-                                  (index * 200) + (index > 4 ? 1200 : 0),
+                                  (index * 200) + (index > questionIndex ? 1200 : 0),
                             ),
                           );
 
@@ -312,14 +314,14 @@ class _ContactSectionState extends State<ContactSection> {
                         end: 0,
                         duration: 1000.ms,
                         delay: Duration(
-                          milliseconds: words.length * 200 + 1200 + 800,
+                          milliseconds: words.length * 200 + 1200 + 800 + 800,
                         ),
                         curve: Curves.easeOutCubic,
                       )
                       .fadeIn(
                         duration: 1000.ms,
                         delay: Duration(
-                          milliseconds: words.length * 200 + 1200 + 800,
+                          milliseconds: words.length * 200 + 1200 + 800 + 800,
                         ),
                       ),
                 ),
