@@ -8,7 +8,7 @@ import 'project_card.dart';
 
 /// A section that displays the portfolio projects in an adaptive grid.
 ///
-/// Automatically switches between a single-column layout for mobile and a 
+/// Automatically switches between a single-column layout for mobile and a
 /// multi-column layout for desktop viewports.
 class ProjectRegistry extends StatelessWidget {
   const ProjectRegistry({super.key});
@@ -34,7 +34,8 @@ class ProjectRegistry extends StatelessWidget {
               children: [
                 Text(
                   'P R O J E C T S',
-                  style: TextStyle(fontFamily: 'JetBrainsMono', 
+                  style: TextStyle(
+                    fontFamily: 'JetBrainsMono',
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
                     color: AppColors.primary,
@@ -58,7 +59,9 @@ class ProjectRegistry extends StatelessWidget {
               );
             })
           else
-            ...List.generate((ProjectData.projects.length / 2).ceil(), (rowIndex) {
+            ...List.generate((ProjectData.projects.length / 2).ceil(), (
+              rowIndex,
+            ) {
               final int firstIndex = rowIndex * 2;
               final int secondIndex = firstIndex + 1;
               return Row(
@@ -137,10 +140,11 @@ class _AnimatedProjectCardState extends State<_AnimatedProjectCard> {
           _queued = true;
           _pendingAnimations.addLast(() {
             if (mounted) setState(() => _isVisible = true);
-            
+
             // Stagger the next animation. Wait for the duration of this animation,
             // minus 200ms to create a slight overlapping cascade.
-            final nextDelay = widget.duration - const Duration(milliseconds: 200);
+            final nextDelay =
+                widget.duration - const Duration(milliseconds: 200);
             Future.delayed(nextDelay, () {
               _isProcessingQueue = false;
               _processQueue();
@@ -150,20 +154,20 @@ class _AnimatedProjectCardState extends State<_AnimatedProjectCard> {
         }
       },
       child: RepaintBoundary(
-        child: ProjectCard(
-          project: widget.project,
-          imageOnLeft: widget.imageOnLeft,
-        ),
-      )
-      .animate(target: _isVisible ? 1 : 0)
-      .fadeIn(duration: widget.duration, delay: widget.delay)
-      .slideY(
-        begin: widget.slideBegin,
-        end: 0,
-        duration: widget.duration,
-        delay: widget.delay,
-        curve: Curves.easeOutCubic,
-      ),
+            child: ProjectCard(
+              project: widget.project,
+              imageOnLeft: widget.imageOnLeft,
+            ),
+          )
+          .animate(target: _isVisible ? 1 : 0)
+          .fadeIn(duration: widget.duration, delay: widget.delay)
+          .slideY(
+            begin: widget.slideBegin,
+            end: 0,
+            duration: widget.duration,
+            delay: widget.delay,
+            curve: Curves.easeOutCubic,
+          ),
     );
   }
 }

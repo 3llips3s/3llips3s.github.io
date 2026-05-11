@@ -312,19 +312,20 @@ class _ContactSectionState extends State<ContactSection> {
                       .animate(target: shouldAnimate ? 1 : 0)
                       // Slides right-to-left strictly after the final word animation locks in (with 800ms breathing delay)
                       .moveX(
-                        begin: 40,
+                        begin: 30,
                         end: 0,
                         duration: 1200.ms,
                         delay: Duration(
                           milliseconds: words.length * 200 + 1200 + 800 + 800,
                         ),
-                        curve: Curves.easeInOutCubic,
+                        curve: Curves.easeInOut,
                       )
                       .fadeIn(
-                        duration: 900.ms,
+                        duration: 1200.ms,
                         delay: Duration(
                           milliseconds: words.length * 200 + 1200 + 800 + 800,
                         ),
+                        curve: Curves.easeInOut,
                       ),
                 ),
               ],

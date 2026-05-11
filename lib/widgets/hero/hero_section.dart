@@ -17,7 +17,10 @@ class HeroSection extends StatefulWidget {
   /// Optional callback invoked when the "see my work" action is triggered.
   final VoidCallback? onSeeMyWork;
 
-  const HeroSection({super.key, this.onSeeMyWork});
+  /// Optional callback invoked when the finale animation (CTA and menu button) starts.
+  final VoidCallback? onFinaleReady;
+
+  const HeroSection({super.key, this.onSeeMyWork, this.onFinaleReady});
 
   @override
   State<HeroSection> createState() => _HeroSectionState();
@@ -90,6 +93,7 @@ class _HeroSectionState extends State<HeroSection> {
       
       _typingKey.currentState?.stopBlinking();
       setState(() => _showFinale = true);
+      widget.onFinaleReady?.call();
 
       Future.delayed(const Duration(milliseconds: 1000), () {
         if (mounted) _precacheProjectAssets();
