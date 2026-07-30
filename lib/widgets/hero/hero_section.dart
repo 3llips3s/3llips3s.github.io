@@ -10,8 +10,8 @@ import 'terminal_typing.dart';
 
 /// The landing section of the portfolio featuring a 3D model and animated intro.
 ///
-/// Orchestrates a complex, multi-phase animation sequence that transitions from 
-/// a username scramble to a tagline reveal. This section adapts its layout for 
+/// Orchestrates a complex, multi-phase animation sequence that transitions from
+/// a username scramble to a tagline reveal. This section adapts its layout for
 /// both mobile and desktop viewports.
 class HeroSection extends StatefulWidget {
   /// Optional callback invoked when the "see my work" action is triggered.
@@ -41,8 +41,7 @@ class _HeroSectionState extends State<HeroSection> {
     _precacheAssets();
   }
 
-  void _precacheAssets() {
-  }
+  void _precacheAssets() {}
 
   void _precacheProjectAssets() {
     for (final project in ProjectData.projects) {
@@ -90,7 +89,7 @@ class _HeroSectionState extends State<HeroSection> {
   void _onTypingComplete() {
     Future.delayed(const Duration(milliseconds: 1200), () {
       if (!mounted) return;
-      
+
       _typingKey.currentState?.stopBlinking();
       setState(() => _showFinale = true);
       widget.onFinaleReady?.call();
@@ -288,7 +287,7 @@ class _HeroSectionState extends State<HeroSection> {
                   // This forces the column to perfectly center the tagline's final width
                   // relative to the username+here block above it.
                   Text(
-                    'I build mobile & web apps @ Studio 10200',
+                    'I build for mobile & web @ Studio 10200',
                     style: taglineStyle.copyWith(color: Colors.transparent),
                   ),
                   TerminalTyping(
