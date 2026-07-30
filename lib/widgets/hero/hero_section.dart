@@ -292,7 +292,7 @@ class _HeroSectionState extends State<HeroSection> {
                   ),
                   TerminalTyping(
                     key: _typingKey,
-                    text: 'I build mobile & web apps @ Studio 10200',
+                    text: 'I build for mobile & web @ Studio 10200',
                     charDelay: const Duration(milliseconds: 60),
                     style: taglineStyle,
                     cursorColor: AppColors.primary,
