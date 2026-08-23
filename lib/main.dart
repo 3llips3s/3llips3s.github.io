@@ -13,14 +13,17 @@ import 'app.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Ensures edge-to-edge drawing on Android Chrome by re-injecting 
+  // Ensures edge-to-edge drawing on Android Chrome by re-injecting
   // 'viewport-fit=cover' which is stripped by the Flutter Web engine.
   if (kIsWeb) {
     final viewportMeta = web.document.querySelector('meta[name="viewport"]');
     if (viewportMeta != null) {
       final currentContent = viewportMeta.getAttribute('content') ?? '';
       if (!currentContent.contains('viewport-fit=cover')) {
-        viewportMeta.setAttribute('content', '$currentContent, viewport-fit=cover');
+        viewportMeta.setAttribute(
+          'content',
+          '$currentContent, viewport-fit=cover',
+        );
       }
     }
   }
